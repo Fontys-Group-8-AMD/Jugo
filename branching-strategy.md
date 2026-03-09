@@ -91,6 +91,15 @@ Before a Merge Request can be approved:
 - No merge conflicts are present
 - The code follows the project coding standards
 - At least one team member reviews the changes
+- The Merge Request must be reviewed and approved
+
+## Approval Policy
+
+To ensure code quality and maintainability:
+
+- Each Merge Request must be approved by at least two team members.
+- One of the required approvals must be from **Dimitar Malamski**.
+- The second approval must be from **Ayoub Lafhaïlat**.
 
 Small and focused Merge Requests are preferred.
 
