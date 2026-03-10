@@ -1,0 +1,17 @@
+# General OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+
+# Logs
+*.log
+
+# Python (likely for AI)
+__pycache__/
+*.pyc
+
+# Node modules (in case other Node services appear)
+node_modules
