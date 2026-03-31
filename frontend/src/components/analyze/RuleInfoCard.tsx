@@ -1,27 +1,73 @@
-import { ShieldCheck } from "lucide-react";
+import { Info } from "lucide-react";
 
 const RuleInfoCard = () => {
   return (
-    <section className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-white)] p-8 shadow-sm">
-      <div className="flex items-start gap-4">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-background)] text-[var(--color-primary)]">
-          <ShieldCheck size={24} strokeWidth={2} />
+    <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-white)] p-8 shadow-sm">
+      <div className="flex items-start gap-3">
+        <div className="mt-1 text-[var(--color-accent)]">
+          <Info size={20} strokeWidth={2} />
         </div>
 
         <div>
-          <span className="inline-flex rounded-full bg-[var(--color-background)] px-3 py-1 text-sm font-medium text-[var(--color-primary)]">
-            Selected Rule
-          </span>
-
-          <h2 className="mt-4 text-2xl font-semibold text-[var(--color-dark)]">
-            IBCS UN 3.2 — Unify Scenarios
+          <h2 className="text-2xl font-semibold text-[var(--color-dark)]">
+            IBCS Rule UN 3.2
           </h2>
 
-          <p className="mt-3 text-base leading-7 text-[var(--color-primary)]/80">
-            This rule checks whether scenario notation is used consistently and
-            clearly across the dashboard, helping users compare values without
-            confusion.
+          <p className="mt-5 text-base leading-9 text-[var(--color-primary)]/80">
+            The "Unify Scenarios" rule requires consistent visual encoding of
+            data scenarios across all charts. Each scenario type must use a
+            distinct, standardized visual pattern to avoid ambiguity.
           </p>
+
+          <div className="mt-10">
+            <h3 className="text-xl font-semibold text-[var(--color-dark)]">
+              IBCS Scenario Notation
+            </h3>
+
+            <div className="mt-6 space-y-5">
+              <div className="flex items-start gap-4">
+                <div className="h-10 w-16 rounded-md bg-[#071637]" />
+                <div>
+                  <p className="text-xl font-semibold text-[var(--color-dark)]">
+                    Actual
+                  </p>
+                  <p className="text-base text-[var(--color-primary)]/70">
+                    Solid fill
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="h-10 w-16 rounded-md border-2 border-[var(--color-dark)] bg-transparent" />
+                <div>
+                  <p className="text-xl font-semibold text-[var(--color-dark)]">
+                    Plan / Budget
+                  </p>
+                  <p className="text-base text-[var(--color-primary)]/70">
+                    Outlined bars
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div
+                  className="h-10 w-16 rounded-md border border-[var(--color-border)]"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(45deg, #c8ced8 0, #c8ced8 1px, transparent 1px, transparent 6px)",
+                  }}
+                />
+                <div>
+                  <p className="text-xl font-semibold text-[var(--color-dark)]">
+                    Forecast
+                  </p>
+                  <p className="text-base text-[var(--color-primary)]/70">
+                    Hatched fill
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

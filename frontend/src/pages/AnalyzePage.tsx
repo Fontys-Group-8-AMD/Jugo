@@ -3,31 +3,42 @@ import RuleInfoCard from "../components/analyze/RuleInfoCard";
 
 const AnalyzePage = () => {
   return (
-    <section className="bg-[var(--color-background)] px-6 py-16 md:py-20">
+    <section className="bg-[var(--color-background)] px-6 py-14 md:py-16">
       <div className="mx-auto max-w-7xl">
-        <div className="mx-auto max-w-3xl text-center">
-          <h1 className="text-4xl font-bold text-[var(--color-dark)] md:text-5xl">
-            Analyze Your Dashboard
+        <div className="mb-10">
+          <h1 className="text-3xl font-bold text-[var(--color-dark)] md:text-4xl">
+            Analyze Dashboard
           </h1>
 
-          <p className="mt-4 text-base leading-8 text-[var(--color-primary)]/80 md:text-lg">
-            Upload a dashboard screenshot and run an AI-powered compliance check
-            against the selected IBCS rule.
+          <p className="mt-3 text-base text-[var(--color-primary)]/80 md:text-lg">
+            Upload a dashboard screenshot to check IBCS UN 3.2 compliance.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-          <UploadZone />
-          <RuleInfoCard />
-        </div>
+        <div className="grid gap-10 xl:grid-cols-[1.55fr_1fr] xl:items-start">
+          <div>
+            <UploadZone />
 
-        <div className="mt-10 flex justify-center lg:justify-end">
-          <button
-            type="button"
-            className="rounded-xl bg-[var(--color-accent)] px-8 py-4 text-base font-semibold text-[var(--color-white)] transition hover:opacity-90"
-          >
-            Run AI Analysis
-          </button>
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <button
+                type="button"
+                className="inline-flex items-center justify-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] px-6 py-4 text-base font-semibold text-[var(--color-dark)] transition hover:bg-[var(--color-surface-muted)]"
+              >
+                <span className="text-lg">↑</span>
+                Upload Visualization
+              </button>
+
+              <button
+                type="button"
+                className="inline-flex items-center justify-center gap-3 rounded-xl bg-[var(--color-accent)] px-6 py-4 text-base font-semibold text-[var(--color-white)] transition hover:opacity-90"
+              >
+                Run AI Analysis
+                <span className="text-lg">→</span>
+              </button>
+            </div>
+          </div>
+
+          <RuleInfoCard />
         </div>
       </div>
     </section>
