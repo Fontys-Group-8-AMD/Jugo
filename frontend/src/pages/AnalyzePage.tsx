@@ -10,6 +10,7 @@ const AnalyzePage = () => {
     previewUrl,
     errorMessage,
     isDragActive,
+    isAnalyzing,
     fileInputRef,
     handleOpenFilePicker,
     handleFileChange,
@@ -51,7 +52,8 @@ const AnalyzePage = () => {
             <AnalyzeActions
               onUploadClick={handleOpenFilePicker}
               onAnalyzeClick={handleAnalyzeClick}
-              isAnalyzeDisabled={!selectedFile}
+              isAnalyzeDisabled={!selectedFile || isAnalyzing}
+              isAnalyzing={isAnalyzing}
             />
           </div>
 
