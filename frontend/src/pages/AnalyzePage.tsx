@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AnalyzeActions from "../components/analyze/AnalyzeActions";
 import AnalyzeHeader from "../components/analyze/AnalyzeHeader";
 import RuleInfoCard from "../components/analyze/RuleInfoCard";
@@ -15,6 +15,19 @@ const AnalyzePage = () => {
   const [isDragActive, setIsDragActive] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const previewUrl = useMemo(() => {
+    if (!selectedFile) return "";
+    return URL.createObjectURL(selectedFile);
+  }, [selectedFile]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const handleOpenFilePicker = () => {
     fileInputRef.current?.click();
@@ -45,10 +58,6 @@ const AnalyzePage = () => {
     const file = event.target.files?.[0] ?? null;
 
     validateAndSetFile(file);
-
-    if (!file) {
-      return;
-    }
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -93,6 +102,7 @@ const AnalyzePage = () => {
   };
 
   const handleAnalyzeClick = () => {
+    // TODO: connect uploaded file to backend analysis endpoint
     console.log("Analyze file:", selectedFile);
   };
 
@@ -113,6 +123,7 @@ const AnalyzePage = () => {
 
             <UploadZone
               selectedFile={selectedFile}
+              previewUrl={previewUrl}
               errorMessage={errorMessage}
               isDragActive={isDragActive}
               onDragEnter={handleDragEnter}
