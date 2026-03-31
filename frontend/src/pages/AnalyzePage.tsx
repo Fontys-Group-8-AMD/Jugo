@@ -44,6 +44,15 @@ const AnalyzePage = () => {
     setErrorMessage("");
   };
 
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    setErrorMessage("");
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleAnalyzeClick = () => {
     console.log("Analyze file:", selectedFile);
   };
@@ -66,6 +75,7 @@ const AnalyzePage = () => {
             <UploadZone
               selectedFile={selectedFile}
               errorMessage={errorMessage}
+              onRemoveFile={handleRemoveFile}
             />
 
             <AnalyzeActions
