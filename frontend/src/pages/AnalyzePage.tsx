@@ -12,6 +12,7 @@ const ALLOWED_FILE_TYPES = ["image/png", "image/jpeg"];
 const AnalyzePage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isDragActive, setIsDragActive] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -19,9 +20,7 @@ const AnalyzePage = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] ?? null;
-
+  const validateAndSetFile = (file: File | null) => {
     if (!file) {
       return;
     }
@@ -29,14 +28,12 @@ const AnalyzePage = () => {
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
       setSelectedFile(null);
       setErrorMessage("Only PNG, JPG, and JPEG files are allowed.");
-      event.target.value = "";
       return;
     }
 
     if (file.size > MAX_FILE_SIZE_BYTES) {
       setSelectedFile(null);
       setErrorMessage("File size must be 10MB or less.");
-      event.target.value = "";
       return;
     }
 
@@ -44,9 +41,51 @@ const AnalyzePage = () => {
     setErrorMessage("");
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+
+    validateAndSetFile(file);
+
+    if (!file) {
+      return;
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleDragEnter = (event: React.DragEvent<HTMLElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragActive(true);
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragActive(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragActive(false);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragActive(false);
+
+    const file = event.dataTransfer.files?.[0] ?? null;
+    validateAndSetFile(file);
+  };
+
   const handleRemoveFile = () => {
     setSelectedFile(null);
     setErrorMessage("");
+    setIsDragActive(false);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -75,6 +114,11 @@ const AnalyzePage = () => {
             <UploadZone
               selectedFile={selectedFile}
               errorMessage={errorMessage}
+              isDragActive={isDragActive}
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
               onRemoveFile={handleRemoveFile}
             />
 
