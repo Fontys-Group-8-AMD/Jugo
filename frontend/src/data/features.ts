@@ -7,20 +7,19 @@ export type Feature = {
 export const features: Feature[] = [
   {
     title: "Upload Dashboards",
-    description:
-      "Easily upload dashboard screenshots for automated compliance analysis.",
+    description: "Drag & drop your dashboard screenshots for instant analysis.",
     icon: "upload",
   },
   {
     title: "IBCS UN 3.2 Compliance",
     description:
-      "Check whether your dashboard follows the Unify Scenarios rule from the IBCS standard.",
+      "Verify scenario notation against the Unify Scenarios standard.",
     icon: "shield",
   },
   {
     title: "Actionable Feedback",
     description:
-      "Receive clear suggestions and practical improvements for better dashboard compliance.",
+      "Get specific issues and visual suggestions to fix compliance gaps.",
     icon: "check",
   },
 ];
