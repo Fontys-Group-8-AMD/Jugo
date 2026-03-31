@@ -1,4 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { mockAnalysisResult } from "../data/mockAnalysisResult";
+import type { ResultsNavigationState } from "../types/analysisResult";
 
 const MAX_FILE_SIZE_MB = 10;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
@@ -8,6 +11,8 @@ export const useAnalyzeUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [isDragActive, setIsDragActive] = useState(false);
+
+  const navigate = useNavigate();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -104,8 +109,19 @@ export const useAnalyzeUpload = () => {
   };
 
   const handleAnalyzeClick = () => {
-    // TODO: connect uploaded file to backend analysis endpoint
-    console.log("Analyze file:", selectedFile);
+    if (!selectedFile || !previewUrl) {
+      return;
+    }
+
+    const navigationState: ResultsNavigationState = {
+      uploadedImageUrl: previewUrl,
+      analysisResult: {
+        ...mockAnalysisResult,
+        uploadedImageUrl: previewUrl,
+      },
+    };
+
+    navigate("/results", { state: navigationState });
   };
 
   return {
