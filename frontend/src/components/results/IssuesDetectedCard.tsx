@@ -1,4 +1,4 @@
-import type { AnalysisIssue } from "../../data/mockAnalysisResult";
+import type { AnalysisIssue } from "../../types/analysisResult";
 
 interface IssuesDetectedCardProps {
   issues: AnalysisIssue[];

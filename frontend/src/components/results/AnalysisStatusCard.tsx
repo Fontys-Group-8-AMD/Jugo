@@ -1,5 +1,5 @@
 import { AlertTriangle, Check } from "lucide-react";
-import type { ScenarioCheck } from "../../data/mockAnalysisResult";
+import type { ScenarioCheck } from "../../types/analysisResult";
 
 interface AnalysisStatusCardProps {
   status: "compliant" | "non-compliant";
