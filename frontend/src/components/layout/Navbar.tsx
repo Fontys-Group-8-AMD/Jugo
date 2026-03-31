@@ -1,0 +1,65 @@
+import { NavLink } from "react-router-dom";
+
+const navLinkBase =
+  "rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200";
+
+const Navbar = () => {
+  return (
+    <header className="w-full border-b border-[var(--color-border)] bg-[var(--color-white)]">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-primary)] text-[var(--color-white)] font-bold shadow-sm">
+            J
+          </div>
+
+          <span className="text-xl font-semibold text-[var(--color-dark)]">
+            IBCS Checker
+          </span>
+        </div>
+
+        <nav className="flex items-center gap-2">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `${navLinkBase} ${
+                isActive
+                  ? "bg-[var(--color-background)] text-[var(--color-primary)]"
+                  : "text-[var(--color-dark)] hover:bg-[var(--color-background)] hover:text-[var(--color-primary)]"
+              }`
+            }
+          >
+            Home
+          </NavLink>
+
+          <NavLink
+            to="/analyze"
+            className={({ isActive }) =>
+              `${navLinkBase} ${
+                isActive
+                  ? "bg-[var(--color-background)] text-[var(--color-primary)]"
+                  : "text-[var(--color-dark)] hover:bg-[var(--color-background)] hover:text-[var(--color-primary)]"
+              }`
+            }
+          >
+            Analyze
+          </NavLink>
+
+          <NavLink
+            to="/results"
+            className={({ isActive }) =>
+              `${navLinkBase} ${
+                isActive
+                  ? "bg-[var(--color-background)] text-[var(--color-primary)]"
+                  : "text-[var(--color-dark)] hover:bg-[var(--color-background)] hover:text-[var(--color-primary)]"
+              }`
+            }
+          >
+            Results
+          </NavLink>
+        </nav>
+      </div>
+    </header>
+  );
+};
+
+export default Navbar;
