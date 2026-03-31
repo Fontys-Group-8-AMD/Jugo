@@ -1,24 +1,42 @@
-import { Link } from "react-router-dom";
+import ResultsHeader from "../components/results/ResultsHeader";
+import UploadedDashboardCard from "../components/results/UploadedDashboardCard";
+import ComplianceScoreCard from "../components/results/ComplianceScoreCard";
+import AnalysisStatusCard from "../components/results/AnalysisStatusCard";
+import SuggestedImprovementsCard from "../components/results/SuggestedImprovementsCard";
+import CorrectNotationCard from "../components/results/CorrectNotationCard";
+import IssuesDetectedCard from "../components/results/IssuesDetectedCard";
+import ExportReportButton from "../components/results/ExportReportButton";
+import { mockAnalysisResult } from "../data/mockAnalysisResult";
 
 const ResultsPage = () => {
+  const result = mockAnalysisResult;
+
   return (
-    <section className="flex flex-1 items-center justify-center bg-[var(--color-background)] px-6 py-12">
-      <div className="w-full max-w-3xl rounded-3xl border border-[var(--color-border)] bg-[var(--color-white)] p-10 text-center shadow-sm">
-        <h1 className="text-3xl font-bold text-[var(--color-dark)] md:text-4xl">
-          No analysis available yet
-        </h1>
+    <section className="bg-[var(--color-background)] px-6 py-14 md:py-16">
+      <div className="mx-auto max-w-7xl">
+        <ResultsHeader />
 
-        <p className="mt-4 text-base leading-8 text-[var(--color-primary)]/80">
-          Upload a dashboard and run an AI analysis first to see compliance
-          results here.
-        </p>
+        <div className="grid gap-10 xl:grid-cols-[1.7fr_1fr] xl:items-start">
+          <div className="space-y-8">
+            <UploadedDashboardCard uploadedImageUrl={result.uploadedImageUrl} />
 
-        <Link
-          to="/analyze"
-          className="mt-8 inline-flex rounded-xl bg-[var(--color-accent)] px-6 py-3 text-base font-semibold text-[var(--color-white)] transition hover:opacity-90"
-        >
-          Go to Analyze
-        </Link>
+            <div className="grid gap-6 md:grid-cols-2">
+              <ComplianceScoreCard score={result.score} />
+
+              <AnalysisStatusCard
+                status={result.status}
+                scenarioChecks={result.scenarioChecks}
+              />
+            </div>
+
+            <IssuesDetectedCard issues={result.issues} />
+          </div>
+          <div className="space-y-6">
+            <SuggestedImprovementsCard suggestions={result.suggestions} />
+            <CorrectNotationCard />
+            <ExportReportButton />
+          </div>
+        </div>
       </div>
     </section>
   );
