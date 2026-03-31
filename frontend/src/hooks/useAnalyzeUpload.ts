@@ -11,6 +11,7 @@ export const useAnalyzeUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [isDragActive, setIsDragActive] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const navigate = useNavigate();
 
@@ -108,10 +109,12 @@ export const useAnalyzeUpload = () => {
     resetFileInput();
   };
 
-  const handleAnalyzeClick = () => {
-    if (!selectedFile || !previewUrl) {
+  const handleAnalyzeClick = async () => {
+    if (!selectedFile || !previewUrl || isAnalyzing) {
       return;
     }
+
+    setIsAnalyzing(true);
 
     const navigationState: ResultsNavigationState = {
       uploadedImageUrl: previewUrl,
@@ -121,6 +124,8 @@ export const useAnalyzeUpload = () => {
       },
     };
 
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+
     navigate("/results", { state: navigationState });
   };
 
@@ -129,6 +134,7 @@ export const useAnalyzeUpload = () => {
     previewUrl,
     errorMessage,
     isDragActive,
+    isAnalyzing,
     fileInputRef,
     handleOpenFilePicker,
     handleFileChange,
