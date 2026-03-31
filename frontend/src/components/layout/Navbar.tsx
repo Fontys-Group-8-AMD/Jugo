@@ -8,7 +8,7 @@ const Navbar = () => {
     <header className="w-full border-b border-[var(--color-border)] bg-[var(--color-white)]">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-primary)] text-[var(--color-white)] font-bold shadow-sm">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-primary)] font-bold text-[var(--color-white)] shadow-sm">
             J
           </div>
 
@@ -42,19 +42,6 @@ const Navbar = () => {
             }
           >
             Analyze
-          </NavLink>
-
-          <NavLink
-            to="/results"
-            className={({ isActive }) =>
-              `${navLinkBase} ${
-                isActive
-                  ? "bg-[var(--color-background)] text-[var(--color-primary)]"
-                  : "text-[var(--color-dark)] hover:bg-[var(--color-background)] hover:text-[var(--color-primary)]"
-              }`
-            }
-          >
-            Results
           </NavLink>
         </nav>
       </div>
