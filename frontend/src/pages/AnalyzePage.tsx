@@ -1,110 +1,25 @@
-import { useEffect, useMemo, useRef, useState } from "react";
 import AnalyzeActions from "../components/analyze/AnalyzeActions";
 import AnalyzeHeader from "../components/analyze/AnalyzeHeader";
 import RuleInfoCard from "../components/analyze/RuleInfoCard";
 import UploadZone from "../components/analyze/UploadZone";
-
-const MAX_FILE_SIZE_MB = 10;
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
-
-const ALLOWED_FILE_TYPES = ["image/png", "image/jpeg"];
+import { useAnalyzeUpload } from "../hooks/useAnalyzeUpload";
 
 const AnalyzePage = () => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isDragActive, setIsDragActive] = useState(false);
-
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const previewUrl = useMemo(() => {
-    if (!selectedFile) return "";
-    return URL.createObjectURL(selectedFile);
-  }, [selectedFile]);
-
-  useEffect(() => {
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  }, [previewUrl]);
-
-  const handleOpenFilePicker = () => {
-    fileInputRef.current?.click();
-  };
-
-  const validateAndSetFile = (file: File | null) => {
-    if (!file) {
-      return;
-    }
-
-    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      setSelectedFile(null);
-      setErrorMessage("Only PNG, JPG, and JPEG files are allowed.");
-      return;
-    }
-
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-      setSelectedFile(null);
-      setErrorMessage("File size must be 10MB or less.");
-      return;
-    }
-
-    setSelectedFile(file);
-    setErrorMessage("");
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] ?? null;
-
-    validateAndSetFile(file);
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleDragEnter = (event: React.DragEvent<HTMLElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragActive(true);
-  };
-
-  const handleDragOver = (event: React.DragEvent<HTMLElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragActive(true);
-  };
-
-  const handleDragLeave = (event: React.DragEvent<HTMLElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragActive(false);
-  };
-
-  const handleDrop = (event: React.DragEvent<HTMLElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragActive(false);
-
-    const file = event.dataTransfer.files?.[0] ?? null;
-    validateAndSetFile(file);
-  };
-
-  const handleRemoveFile = () => {
-    setSelectedFile(null);
-    setErrorMessage("");
-    setIsDragActive(false);
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleAnalyzeClick = () => {
-    // TODO: connect uploaded file to backend analysis endpoint
-    console.log("Analyze file:", selectedFile);
-  };
+  const {
+    selectedFile,
+    previewUrl,
+    errorMessage,
+    isDragActive,
+    fileInputRef,
+    handleOpenFilePicker,
+    handleFileChange,
+    handleDragEnter,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    handleRemoveFile,
+    handleAnalyzeClick,
+  } = useAnalyzeUpload();
 
   return (
     <section className="bg-[var(--color-background)] px-6 py-14 md:py-16">
