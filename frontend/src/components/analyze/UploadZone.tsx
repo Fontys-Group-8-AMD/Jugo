@@ -19,7 +19,7 @@ const UploadZone = ({ selectedFile, errorMessage }: UploadZoneProps) => {
 
         {!selectedFile && (
           <p className="mt-3 text-base text-[var(--color-primary)]/70">
-            PNG, JPG, or SVG up to 10MB
+            PNG, JPG, or JPEG up to 10MB
           </p>
         )}
 

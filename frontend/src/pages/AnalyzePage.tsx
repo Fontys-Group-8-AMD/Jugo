@@ -4,6 +4,11 @@ import AnalyzeHeader from "../components/analyze/AnalyzeHeader";
 import RuleInfoCard from "../components/analyze/RuleInfoCard";
 import UploadZone from "../components/analyze/UploadZone";
 
+const MAX_FILE_SIZE_MB = 10;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+const ALLOWED_FILE_TYPES = ["image/png", "image/jpeg"];
+
 const AnalyzePage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
@@ -16,6 +21,24 @@ const AnalyzePage = () => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
+
+    if (!file) {
+      return;
+    }
+
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      setSelectedFile(null);
+      setErrorMessage("Only PNG, JPG, and JPEG files are allowed.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setSelectedFile(null);
+      setErrorMessage("File size must be 10MB or less.");
+      event.target.value = "";
+      return;
+    }
 
     setSelectedFile(file);
     setErrorMessage("");
