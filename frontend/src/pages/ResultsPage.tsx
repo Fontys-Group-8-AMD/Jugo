@@ -3,7 +3,7 @@ import AnalysisStatusCard from "../components/results/AnalysisStatusCard";
 import ComplianceScoreCard from "../components/results/ComplianceScoreCard";
 import CorrectNotationCard from "../components/results/CorrectNotationCard";
 import ExportReportButton from "../components/results/ExportReportButton";
-import IssuesDetectedCard from "../components/results/IssuesDetectedCard";
+// import IssuesDetectedCard from "../components/results/IssuesDetectedCard";
 import ResultsHeader from "../components/results/ResultsHeader";
 import SuggestedImprovementsCard from "../components/results/SuggestedImprovementsCard";
 import UploadedDashboardCard from "../components/results/UploadedDashboardCard";
