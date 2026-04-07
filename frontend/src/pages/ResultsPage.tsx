@@ -58,7 +58,7 @@ const ResultsPage = () => {
               />
             </div>
 
-            <IssuesDetectedCard issues={analysisResult.issues} />
+            {/* <IssuesDetectedCard issues={analysisResult.issues} /> */}
           </div>
 
           <div className="space-y-6">
