@@ -1,4 +1,8 @@
-export type ScenarioLegendVariant = "solid" | "outline" | "hatched";
+export type ScenarioLegendVariant =
+  | "actual"
+  | "outline"
+  | "hatched"
+  | "previous";
 
 export interface ScenarioLegendItemData {
   label: string;
@@ -8,9 +12,14 @@ export interface ScenarioLegendItemData {
 
 export const scenarioNotation: ScenarioLegendItemData[] = [
   {
+    label: "Previous",
+    description: "Light solid fill",
+    variant: "previous",
+  },
+  {
     label: "Actual",
     description: "Solid fill",
-    variant: "solid",
+    variant: "actual",
   },
   {
     label: "Plan / Budget",

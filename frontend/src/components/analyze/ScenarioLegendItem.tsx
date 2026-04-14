@@ -6,11 +6,13 @@ interface ScenarioLegendItemProps {
 
 const ScenarioLegendItem = ({ item }: ScenarioLegendItemProps) => {
   const swatchClassName =
-    item.variant === "solid"
-      ? "bg-[#071637]"
-      : item.variant === "outline"
-        ? "border-2 border-[var(--color-dark)] bg-transparent"
-        : "border border-[var(--color-border)] bg-[var(--color-white)]";
+    item.variant === "actual"
+      ? "bg-[#4A4A4A]"
+      : item.variant === "previous"
+        ? "bg-[#A3A3A3]"
+        : item.variant === "outline"
+          ? "border-2 border-[var(--color-dark)] bg-transparent"
+          : "border-2 border-[var(--color-dark)] bg-[var(--color-white)]";
 
   return (
     <div className="flex items-start gap-4">
@@ -20,7 +22,7 @@ const ScenarioLegendItem = ({ item }: ScenarioLegendItemProps) => {
           item.variant === "hatched"
             ? {
                 backgroundImage:
-                  "repeating-linear-gradient(45deg, #c8ced8 0, #c8ced8 1px, transparent 1px, transparent 6px)",
+                  "repeating-linear-gradient(135deg, #4A4A4A 0, #4A4A4A 3px, transparent 3px, transparent 8px)",
               }
             : undefined
         }
