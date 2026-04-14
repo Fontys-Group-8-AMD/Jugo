@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import jugoLogo from "../../assets/jugo.svg";
 
 const navLinkBase =
   "rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200";
@@ -8,13 +9,15 @@ const Navbar = () => {
     <header className="w-full border-b border-[var(--color-border)] bg-[var(--color-white)]">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-primary)] font-bold text-[var(--color-white)] shadow-sm">
-            J
-          </div>
+          <img
+            src={jugoLogo}
+            alt="Jugo logo"
+            className="h-10 w-40 object-contain"
+          />
 
-          <span className="text-xl font-semibold text-[var(--color-dark)]">
+          {/* <span className="text-xl font-semibold text-[var(--color-dark)]">
             IBCS Checker
-          </span>
+          </span> */}
         </div>
 
         <nav className="flex items-center gap-2">
