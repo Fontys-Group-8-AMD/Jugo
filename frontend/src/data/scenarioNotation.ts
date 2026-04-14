@@ -18,7 +18,7 @@ export const scenarioNotation: ScenarioLegendItemData[] = [
   },
   {
     label: "Actual",
-    description: "Solid fill",
+    description: "Dark Solid fill",
     variant: "actual",
   },
   {

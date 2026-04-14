@@ -1,5 +1,6 @@
 export interface ScenarioCheck {
-  label: string;
+  label: "Previous" | "Actual" | "Plan / Budget" | "Forecast";
+  present: boolean;
   status: "compliant" | "non-compliant";
 }
 

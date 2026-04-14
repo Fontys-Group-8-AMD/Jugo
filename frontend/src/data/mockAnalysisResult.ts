@@ -2,31 +2,33 @@ import type { AnalysisResult } from "../types/analysisResult";
 import sampleDashboard from "../assets/sample-dashboard.png";
 
 export const mockAnalysisResult: AnalysisResult = {
-  score: 62,
-  status: "non-compliant",
+  score: 100,
+  status: "compliant",
   uploadedImageUrl: sampleDashboard,
   scenarioChecks: [
-    { label: "Actual", status: "compliant" },
-    { label: "Plan", status: "non-compliant" },
-    { label: "Forecast", status: "non-compliant" },
+    {
+      label: "Previous",
+      present: false,
+      status: "non-compliant",
+    },
+    {
+      label: "Actual",
+      present: true,
+      status: "compliant",
+    },
+    {
+      label: "Plan / Budget",
+      present: false,
+      status: "non-compliant",
+    },
+    {
+      label: "Forecast",
+      present: true,
+      status: "compliant",
+    },
   ],
-  issues: [
-    {
-      message: "Forecast data uses solid fill instead of hatched fill.",
-      severity: "high",
-    },
-    {
-      message: "Plan/Budget data uses solid fill instead of outlined bars.",
-      severity: "high",
-    },
-    {
-      message: "No legend distinguishes scenario types.",
-      severity: "medium",
-    },
-  ],
+  issues: [],
   suggestions: [
-    "Replace solid bars for planned data with outlined (hollow) bars.",
-    "Apply hatched fill pattern to all forecast data series.",
-    "Add a scenario legend referencing IBCS notation standards.",
+    "The dashboard appears to follow IBCS UN 3.2 scenario notation for the visible scenarios.",
   ],
 };
