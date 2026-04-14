@@ -1,14 +1,20 @@
 import { scenarioNotation } from "../../data/scenarioNotation";
 import ScenarioLegendItem from "./ScenarioLegendItem";
 
-const ScenarioLegend = () => {
-  return (
-    <div className="mt-8">
-      <h3 className="text-xl font-semibold text-[var(--color-dark)]">
-        IBCS Scenario Notation
-      </h3>
+interface ScenarioLegendProps {
+  showTitle?: boolean;
+}
 
-      <div className="mt-6 space-y-5">
+const ScenarioLegend = ({ showTitle = true }: ScenarioLegendProps) => {
+  return (
+    <div className="mt-9">
+      {showTitle && (
+        <h3 className="text-lg font-semibold text-[var(--color-dark)]">
+          Scenario Notation
+        </h3>
+      )}
+
+      <div className={showTitle ? "mt-5 space-y-5" : "space-y-5"}>
         {scenarioNotation.map((item) => (
           <ScenarioLegendItem key={item.label} item={item} />
         ))}
