@@ -24,7 +24,7 @@ const UploadZone = ({
   onDrop,
   onRemoveFile,
 }: UploadZoneProps) => {
-  const uploadZoneClassName = `flex min-h-[26rem] items-center justify-center rounded-2xl border-2 border-dashed px-6 py-10 shadow-sm transition ${
+  const uploadZoneClassName = `flex min-h-[28rem] items-center justify-center rounded-2xl border-2 border-dashed px-6 py-10 shadow-sm transition ${
     isDragActive
       ? "border-[var(--color-accent)] bg-[var(--color-background)]"
       : "border-[var(--color-border)] bg-[var(--color-white)]"

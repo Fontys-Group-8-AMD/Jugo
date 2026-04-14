@@ -25,9 +25,11 @@ const RuleInfoCard = () => {
 
       {showExplanation && (
         <p className="mt-4 text-base leading-8 text-[var(--color-primary)]/80">
-          The &quot;Unify Scenarios&quot; rule requires consistent visual
-          encoding of data scenarios across all charts. Each scenario type must
-          use a distinct, standardized visual pattern to avoid ambiguity.
+          The &quot;Unify Scenarios&quot; rule requires scenarios to be shown
+          consistently across all charts. Previous values should use a light
+          solid fill, Actual values a dark solid fill, Forecast values a hatched
+          pattern, and Plan or Budget values an outlined style. This helps users
+          distinguish scenarios quickly and avoids visual confusion.
         </p>
       )}
 

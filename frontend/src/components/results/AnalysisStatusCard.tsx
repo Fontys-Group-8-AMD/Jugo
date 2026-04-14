@@ -11,6 +11,7 @@ const AnalysisStatusCard = ({
   scenarioChecks,
 }: AnalysisStatusCardProps) => {
   const isCompliant = status === "compliant";
+  const visibleScenarioChecks = scenarioChecks.filter((check) => check.present);
 
   return (
     <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-white)] p-8 shadow-sm">
@@ -35,7 +36,7 @@ const AnalysisStatusCard = ({
       </div>
 
       <div className="mt-8 space-y-4">
-        {scenarioChecks.map((check) => {
+        {visibleScenarioChecks.map((check) => {
           const scenarioIsCompliant = check.status === "compliant";
 
           return (
