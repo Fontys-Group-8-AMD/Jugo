@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { mockAnalysisResult } from "../data/mockAnalysisResult";
-import type { ResultsNavigationState } from "../types/analysisResult";
+// import { mockAnalysisResult } from "../data/mockAnalysisResult";
+import type {
+  AnalysisResult,
+  ResultsNavigationState,
+} from "../types/analysisResult";
+import { analyzeImage } from "../api/analyzeApi";
 
 const MAX_FILE_SIZE_MB = 10;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
@@ -114,19 +118,54 @@ export const useAnalyzeUpload = () => {
       return;
     }
 
-    setIsAnalyzing(true);
+    try {
+      setIsAnalyzing(true);
+      setErrorMessage("");
 
-    const navigationState: ResultsNavigationState = {
-      uploadedImageUrl: previewUrl,
-      analysisResult: {
-        ...mockAnalysisResult,
+      const predictionResult = await analyzeImage(selectedFile);
+
+      const analysisResult: AnalysisResult = {
         uploadedImageUrl: previewUrl,
-      },
-    };
+        status: predictionResult.label_name,
+        score: Math.round(
+          (predictionResult.label_name === "compliant"
+            ? predictionResult.probability_compliant
+            : predictionResult.probability_non_compliant) * 100,
+        ),
+        scenarioChecks: [],
+        issues:
+          predictionResult.label_name === "non-compliant"
+            ? [
+                {
+                  message:
+                    "The uploaded dashboard appears to be non-compliant.",
+                  severity: "high",
+                },
+              ]
+            : [],
+        suggestions:
+          predictionResult.label_name === "non-compliant"
+            ? ["Review the dashboard against the IBCS compliance rules."]
+            : [
+                "The dashboard appears compliant based on the model prediction.",
+              ],
+      };
 
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+      const navigationState: ResultsNavigationState = {
+        uploadedImageUrl: previewUrl,
+        analysisResult,
+      };
 
-    navigate("/results", { state: navigationState });
+      navigate("/results", { state: navigationState });
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong during analysis.";
+      setErrorMessage(message);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return {
