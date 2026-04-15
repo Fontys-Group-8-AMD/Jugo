@@ -6,7 +6,7 @@ const ComplianceScoreCard = ({ score }: ComplianceScoreCardProps) => {
   return (
     <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-white)] p-8 shadow-sm">
       <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[var(--color-primary)]/80">
-        Compliance Score
+        Prediction confidence
       </p>
 
       <div className="mt-5 flex items-end gap-3">

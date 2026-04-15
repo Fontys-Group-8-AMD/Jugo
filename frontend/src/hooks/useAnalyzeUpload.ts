@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { mockAnalysisResult } from "../data/mockAnalysisResult";
+import { analyzeImage } from "../api/analyzeApi";
+import { mapPredictionToAnalysisResult } from "../mappers/analysisResultMapper";
 import type { ResultsNavigationState } from "../types/analysisResult";
-
-const MAX_FILE_SIZE_MB = 10;
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
-const ALLOWED_FILE_TYPES = ["image/png", "image/jpeg"];
+import { getFileValidationError } from "../utils/fileValidation";
 
 export const useAnalyzeUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -14,11 +12,13 @@ export const useAnalyzeUpload = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const navigate = useNavigate();
-
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const previewUrl = useMemo(() => {
-    if (!selectedFile) return "";
+    if (!selectedFile) {
+      return "";
+    }
+
     return URL.createObjectURL(selectedFile);
   }, [selectedFile]);
 
@@ -36,19 +36,7 @@ export const useAnalyzeUpload = () => {
     }
   };
 
-  const getFileValidationError = (file: File): string | null => {
-    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      return "Only PNG, JPG, and JPEG files are allowed.";
-    }
-
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-      return "File size must be 10MB or less.";
-    }
-
-    return null;
-  };
-
-  const validateAndSetFile = (file: File | null) => {
+  const setValidatedFile = (file: File | null) => {
     if (!file) {
       return;
     }
@@ -71,7 +59,7 @@ export const useAnalyzeUpload = () => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
-    validateAndSetFile(file);
+    setValidatedFile(file);
     resetFileInput();
   };
 
@@ -99,7 +87,7 @@ export const useAnalyzeUpload = () => {
     setIsDragActive(false);
 
     const file = event.dataTransfer.files?.[0] ?? null;
-    validateAndSetFile(file);
+    setValidatedFile(file);
   };
 
   const handleRemoveFile = () => {
@@ -114,19 +102,32 @@ export const useAnalyzeUpload = () => {
       return;
     }
 
-    setIsAnalyzing(true);
+    try {
+      setIsAnalyzing(true);
+      setErrorMessage("");
 
-    const navigationState: ResultsNavigationState = {
-      uploadedImageUrl: previewUrl,
-      analysisResult: {
-        ...mockAnalysisResult,
+      const predictionResult = await analyzeImage(selectedFile);
+      const analysisResult = mapPredictionToAnalysisResult(
+        predictionResult,
+        previewUrl,
+      );
+
+      const navigationState: ResultsNavigationState = {
         uploadedImageUrl: previewUrl,
-      },
-    };
+        analysisResult,
+      };
 
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+      navigate("/results", { state: navigationState });
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong during analysis.";
 
-    navigate("/results", { state: navigationState });
+      setErrorMessage(message);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return {
