@@ -1,15 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { mockAnalysisResult } from "../data/mockAnalysisResult";
-import type {
-  AnalysisResult,
-  ResultsNavigationState,
-} from "../types/analysisResult";
 import { analyzeImage } from "../api/analyzeApi";
-
-const MAX_FILE_SIZE_MB = 10;
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
-const ALLOWED_FILE_TYPES = ["image/png", "image/jpeg"];
+import { mapPredictionToAnalysisResult } from "../mappers/analysisResultMapper";
+import type { ResultsNavigationState } from "../types/analysisResult";
+import { getFileValidationError } from "../utils/fileValidation";
 
 export const useAnalyzeUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -18,11 +12,13 @@ export const useAnalyzeUpload = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const navigate = useNavigate();
-
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const previewUrl = useMemo(() => {
-    if (!selectedFile) return "";
+    if (!selectedFile) {
+      return "";
+    }
+
     return URL.createObjectURL(selectedFile);
   }, [selectedFile]);
 
@@ -40,19 +36,7 @@ export const useAnalyzeUpload = () => {
     }
   };
 
-  const getFileValidationError = (file: File): string | null => {
-    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      return "Only PNG, JPG, and JPEG files are allowed.";
-    }
-
-    if (file.size > MAX_FILE_SIZE_BYTES) {
-      return "File size must be 10MB or less.";
-    }
-
-    return null;
-  };
-
-  const validateAndSetFile = (file: File | null) => {
+  const setValidatedFile = (file: File | null) => {
     if (!file) {
       return;
     }
@@ -75,7 +59,7 @@ export const useAnalyzeUpload = () => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
-    validateAndSetFile(file);
+    setValidatedFile(file);
     resetFileInput();
   };
 
@@ -103,7 +87,7 @@ export const useAnalyzeUpload = () => {
     setIsDragActive(false);
 
     const file = event.dataTransfer.files?.[0] ?? null;
-    validateAndSetFile(file);
+    setValidatedFile(file);
   };
 
   const handleRemoveFile = () => {
@@ -123,33 +107,10 @@ export const useAnalyzeUpload = () => {
       setErrorMessage("");
 
       const predictionResult = await analyzeImage(selectedFile);
-
-      const analysisResult: AnalysisResult = {
-        uploadedImageUrl: previewUrl,
-        status: predictionResult.label_name,
-        score: Math.round(
-          (predictionResult.label_name === "compliant"
-            ? predictionResult.probability_compliant
-            : predictionResult.probability_non_compliant) * 100,
-        ),
-        scenarioChecks: [],
-        issues:
-          predictionResult.label_name === "non-compliant"
-            ? [
-                {
-                  message:
-                    "The uploaded dashboard appears to be non-compliant.",
-                  severity: "high",
-                },
-              ]
-            : [],
-        suggestions:
-          predictionResult.label_name === "non-compliant"
-            ? ["Review the dashboard against the IBCS compliance rules."]
-            : [
-                "The dashboard appears compliant based on the model prediction.",
-              ],
-      };
+      const analysisResult = mapPredictionToAnalysisResult(
+        predictionResult,
+        previewUrl,
+      );
 
       const navigationState: ResultsNavigationState = {
         uploadedImageUrl: previewUrl,
@@ -162,6 +123,7 @@ export const useAnalyzeUpload = () => {
         error instanceof Error
           ? error.message
           : "Something went wrong during analysis.";
+
       setErrorMessage(message);
     } finally {
       setIsAnalyzing(false);
