@@ -1,9 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import AnalysisStatusCard from "../components/results/AnalysisStatusCard";
 import ComplianceScoreCard from "../components/results/ComplianceScoreCard";
-import CorrectNotationCard from "../components/results/CorrectNotationCard";
 import ExportReportButton from "../components/results/ExportReportButton";
-// import IssuesDetectedCard from "../components/results/IssuesDetectedCard";
 import ResultsHeader from "../components/results/ResultsHeader";
 import SuggestedImprovementsCard from "../components/results/SuggestedImprovementsCard";
 import UploadedDashboardCard from "../components/results/UploadedDashboardCard";
@@ -15,7 +13,7 @@ const ResultsPage = () => {
 
   if (!navigationState) {
     return (
-      <section className="flex flex-1 items-center justify-center bg-[var(--color-background)] px-6 py-12">
+      <section className="flex min-h-screen items-center justify-center bg-[var(--color-background)] px-6 py-12">
         <div className="w-full max-w-3xl rounded-3xl border border-[var(--color-border)] bg-[var(--color-white)] p-10 text-center shadow-sm">
           <h1 className="text-3xl font-bold text-[var(--color-dark)] md:text-4xl">
             No analysis available yet
@@ -40,34 +38,31 @@ const ResultsPage = () => {
   const { analysisResult } = navigationState;
 
   return (
-    <section className="bg-[var(--color-background)] px-6 py-14 md:py-16">
-      <div className="mx-auto max-w-7xl">
+    <section className="min-h-screen bg-[var(--color-background)] px-5 py-5">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4">
         <ResultsHeader />
 
-        <div className="grid gap-10 xl:grid-cols-[1.7fr_1fr] xl:items-start">
-          <div className="space-y-8">
-            <UploadedDashboardCard
-              uploadedImageUrl={analysisResult.uploadedImageUrl}
-            />
+        <div className="grid gap-4 xl:grid-cols-[1.25fr_0.9fr] xl:items-start">
+          <UploadedDashboardCard
+            uploadedImageUrl={analysisResult.uploadedImageUrl}
+          />
 
-            <div className="grid gap-6 md:grid-cols-2">
+          <aside className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <ComplianceScoreCard score={analysisResult.score} />
+
               <AnalysisStatusCard
                 status={analysisResult.status}
                 scenarioChecks={analysisResult.scenarioChecks}
               />
             </div>
 
-            {/* <IssuesDetectedCard issues={analysisResult.issues} /> */}
-          </div>
-
-          <div className="space-y-6">
             <SuggestedImprovementsCard
               suggestions={analysisResult.suggestions}
             />
-            <CorrectNotationCard />
+
             <ExportReportButton />
-          </div>
+          </aside>
         </div>
       </div>
     </section>

@@ -14,51 +14,53 @@ const AnalysisStatusCard = ({
   const visibleScenarioChecks = scenarioChecks.filter((check) => check.present);
 
   return (
-    <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-white)] p-8 shadow-sm">
-      <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[var(--color-primary)]/80">
+    <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-white)] p-5 shadow-sm">
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-primary)]/80">
         Status
       </p>
 
-      <div className="mt-5 flex items-center gap-3">
+      <div className="mt-4 flex items-center gap-2">
         {isCompliant ? (
-          <Check className="text-emerald-500" size={28} strokeWidth={2.2} />
+          <Check className="text-emerald-500" size={22} strokeWidth={2.2} />
         ) : (
           <AlertTriangle
             className="text-amber-500"
-            size={28}
+            size={22}
             strokeWidth={2.2}
           />
         )}
 
-        <h2 className="text-3xl font-semibold text-[var(--color-dark)]">
+        <h2 className="text-2xl font-semibold text-[var(--color-dark)]">
           {isCompliant ? "Compliant" : "Non-Compliant"}
         </h2>
       </div>
 
-      <div className="mt-8 space-y-4">
-        {visibleScenarioChecks.map((check) => {
-          const scenarioIsCompliant = check.status === "compliant";
+      {visibleScenarioChecks.length > 0 && (
+        <div className="mt-5 space-y-2">
+          {visibleScenarioChecks.map((check) => {
+            const scenarioIsCompliant = check.status === "compliant";
 
-          return (
-            <div
-              key={check.label}
-              className="flex items-center justify-between gap-4"
-            >
-              <span className="text-xl text-[var(--color-primary)]/85">
-                {check.label}
-              </span>
-
-              <span
-                className={`text-lg font-medium ${
-                  scenarioIsCompliant ? "text-emerald-500" : "text-red-500"
-                }`}
+            return (
+              <div
+                key={check.label}
+                className="flex items-center justify-between gap-3"
               >
-                {scenarioIsCompliant ? "✓ Compliant" : "✗ Non-compliant"}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+                <span className="text-sm text-[var(--color-primary)]/85">
+                  {check.label}
+                </span>
+
+                <span
+                  className={`text-sm font-medium ${
+                    scenarioIsCompliant ? "text-emerald-500" : "text-red-500"
+                  }`}
+                >
+                  {scenarioIsCompliant ? "✓" : "✗"}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 };
