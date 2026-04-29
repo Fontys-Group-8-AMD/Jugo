@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const HeroSection = () => {
   return (
     <section className="bg-[linear-gradient(90deg,var(--color-dark)_0%,var(--color-primary)_100%)] px-6 py-24 md:py-32">
@@ -17,9 +19,12 @@ const HeroSection = () => {
         </p>
 
         <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-          <button className="rounded-xl bg-[var(--color-accent)] px-8 py-4 text-base font-semibold text-[var(--color-white)] shadow-lg transition hover:opacity-90">
+          <Link
+            to="/analyze"
+            className="rounded-xl bg-[var(--color-accent)] px-8 py-4 text-base font-semibold text-[var(--color-white)] shadow-lg transition hover:opacity-90"
+          >
             Analyze Dashboard
-          </button>
+          </Link>
 
           <button className="rounded-xl border border-[var(--color-accent)] px-8 py-4 text-base font-semibold text-[var(--color-accent)] transition hover:bg-[var(--color-accent)] hover:text-[var(--color-white)]">
             Learn More
