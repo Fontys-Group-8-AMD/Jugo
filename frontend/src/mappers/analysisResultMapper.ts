@@ -26,7 +26,19 @@ export const mapPredictionToAnalysisResult = (
         : [],
     suggestions:
       predictionResult.label_name === "non-compliant"
-        ? ["Review the dashboard against the IBCS compliance rules."]
-        : ["The dashboard appears compliant based on the model prediction."],
+        ? [
+            "Review the dashboard against the IBCS compliance rules.",
+            "Check whether actual, plan, and forecast values use the correct scenario notation.",
+            "Add clear visual markers around non-compliant areas so users can immediately see what needs attention.",
+            "Make sure all scenario labels are consistent and easy to compare.",
+            "Include a short explanation of how the confidence score was calculated to improve trust in the result.",
+          ]
+        : [
+            "The dashboard appears compliant based on the model prediction.",
+            "The visible scenario notation seems clear and consistent.",
+            "Consider adding visual confirmation markers around compliant areas for easier interpretation.",
+            "Keep the suggested improvements visible on the same screen as the uploaded dashboard.",
+            "Add a short explanation of how the prediction confidence was calculated to make the result more transparent.",
+          ],
   };
 };

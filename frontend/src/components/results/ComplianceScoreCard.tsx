@@ -4,7 +4,7 @@ interface ComplianceScoreCardProps {
 
 const ComplianceScoreCard = ({ score }: ComplianceScoreCardProps) => {
   return (
-    <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-white)] p-5 shadow-sm">
+    <section className="rounded-md border border-[var(--color-border)] bg-[var(--color-white)] p-5 shadow-sm">
       <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-primary)]/80">
         Prediction confidence
       </p>

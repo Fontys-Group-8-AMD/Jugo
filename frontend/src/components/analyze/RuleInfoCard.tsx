@@ -6,7 +6,7 @@ const RuleInfoCard = () => {
   const [showExplanation, setShowExplanation] = useState(false);
 
   return (
-    <section className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-white)] p-8 shadow-sm">
+    <section className="rounded-md border border-[var(--color-border)] bg-[var(--color-white)] p-8 shadow-sm">
       <div className="flex items-center gap-3">
         <h2 className="text-2xl font-semibold text-[var(--color-dark)]">
           IBCS Rule UN 3.2

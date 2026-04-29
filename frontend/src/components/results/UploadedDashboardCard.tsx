@@ -6,7 +6,7 @@ const UploadedDashboardCard = ({
   uploadedImageUrl,
 }: UploadedDashboardCardProps) => {
   return (
-    <section className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-white)] shadow-sm">
+    <section className="rounded-md overflow-hidden border border-[var(--color-border)] bg-[var(--color-white)] shadow-sm">
       <div className="border-b border-[var(--color-border)] px-5 py-3">
         <h2 className="text-base font-semibold text-[var(--color-dark)]">
           Uploaded Dashboard

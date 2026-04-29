@@ -29,6 +29,10 @@ export const mockAnalysisResult: AnalysisResult = {
   ],
   issues: [],
   suggestions: [
-    "The dashboard appears to follow IBCS UN 3.2 scenario notation for the visible scenarios.",
+    "Previous values should use the correct IBCS notation so users can clearly distinguish them from actual values.",
+    "Plan or budget values are present, but their notation does not fully match the expected IBCS UN 3.2 standard.",
+    "Forecast values should be visually separated from actual values using the correct scenario notation.",
+    "Add colored feedback boxes around the detected problem areas so users can immediately see what needs to be corrected.",
+    "Include a short explanation of how the confidence score was calculated to make the result more trustworthy.",
   ],
 };
