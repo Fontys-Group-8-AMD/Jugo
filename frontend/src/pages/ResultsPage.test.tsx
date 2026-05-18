@@ -45,10 +45,15 @@ describe("ResultsPage", () => {
         uploadedImageUrl: "blob:mock-preview-url",
         score: 88,
         status: "compliant",
-        scenarioChecks: [],
+        scenarioChecks: [
+          { label: "Previous", present: true, status: "compliant" },
+          { label: "Actual", present: true, status: "compliant" },
+          { label: "Plan / Budget", present: true, status: "compliant" },
+          { label: "Forecast", present: true, status: "compliant" },
+        ],
         issues: [],
         suggestions: [
-          "The dashboard appears compliant based on the model prediction.",
+          "All four IBCS rules look compliant according to the notebook model.",
         ],
       },
     };
@@ -64,9 +69,7 @@ describe("ResultsPage", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(
-        /the dashboard appears compliant based on the model prediction/i,
-      ),
+      screen.getByText(/all four ibcs rules look compliant according to the notebook model/i),
     ).toBeInTheDocument();
 
     expect(screen.getByAltText(/uploaded dashboard/i)).toHaveAttribute(
@@ -82,15 +85,20 @@ describe("ResultsPage", () => {
         uploadedImageUrl: "blob:mock-preview-url",
         score: 72,
         status: "non-compliant",
-        scenarioChecks: [],
+        scenarioChecks: [
+          { label: "Previous", present: true, status: "non-compliant" },
+          { label: "Actual", present: true, status: "compliant" },
+          { label: "Plan / Budget", present: true, status: "non-compliant" },
+          { label: "Forecast", present: true, status: "compliant" },
+        ],
         issues: [
           {
-            message: "The dashboard does not use consistent scenario notation.",
+            message: "Previous is non-compliant. Previous Year is incorrect because the color is not lighter than Actual values. IBCS recommends lighter colors for historical data.",
             severity: "high",
           },
         ],
         suggestions: [
-          "Use consistent notation for Actual, Previous, Forecast, and Plan values.",
+          "Review the non-compliant rules in the uploaded dashboard and align their visual notation with the notebook model feedback.",
         ],
       },
     };
@@ -107,7 +115,7 @@ describe("ResultsPage", () => {
 
     expect(
       screen.getByText(
-        /use consistent notation for actual, previous, forecast, and plan values/i,
+        /review the non-compliant rules in the uploaded dashboard and align their visual notation with the notebook model feedback/i,
       ),
     ).toBeInTheDocument();
 
