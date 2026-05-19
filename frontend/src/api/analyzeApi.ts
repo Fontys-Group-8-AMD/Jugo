@@ -1,8 +1,21 @@
+export type RulePrediction = {
+  rule: "AC" | "PY" | "PL" | "FC";
+  label: string;
+  prediction: number;
+  status: "compliant" | "non-compliant";
+  confidence: number;
+  probability_compliant: number;
+  probability_non_compliant: number;
+  explanation: string;
+};
+
 export type PredictionResponse = {
   prediction: number;
   label_name: "compliant" | "non-compliant";
+  score: number;
   probability_compliant: number;
   probability_non_compliant: number;
+  rules: RulePrediction[];
   filename?: string;
 };
 
