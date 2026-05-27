@@ -10,7 +10,9 @@ const AnalysisSummaryCard = ({
   const isCompliant = status === "compliant";
   const statusLabel = isCompliant ? "Compliant" : "Non-Compliant";
 
-  const visibleScenarioChecks = scenarioChecks.filter((check) => check.present);
+  const visibleScenarioChecks = scenarioChecks.filter(
+    (check) => check.evaluated,
+  );
 
   return (
     <section className="rounded-md border border-[var(--color-border)] bg-[var(--color-white)] p-4 shadow-sm">
@@ -41,8 +43,8 @@ const AnalysisSummaryCard = ({
               {visibleScenarioChecks.map((check) => {
                 const scenarioIsCompliant = check.status === "compliant";
                 const scenarioStatusLabel = scenarioIsCompliant
-                  ? "✓ Compliant"
-                  : "✗ Non-compliant";
+                  ? "✓ No issues detected"
+                  : `✗ Issues detected in ${check.label}`;
 
                 return (
                   <div

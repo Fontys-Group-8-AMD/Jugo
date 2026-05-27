@@ -46,10 +46,10 @@ describe("ResultsPage", () => {
         score: 88,
         status: "compliant",
         scenarioChecks: [
-          { label: "Previous", present: true, status: "compliant" },
-          { label: "Actual", present: true, status: "compliant" },
-          { label: "Plan / Budget", present: true, status: "compliant" },
-          { label: "Forecast", present: true, status: "compliant" },
+          { label: "Previous", evaluated: true, status: "compliant" },
+          { label: "Actual", evaluated: true, status: "compliant" },
+          { label: "Plan / Budget", evaluated: true, status: "compliant" },
+          { label: "Forecast", evaluated: true, status: "compliant" },
         ],
         issues: [],
         suggestions: [
@@ -69,7 +69,9 @@ describe("ResultsPage", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByText(/all four ibcs rules look compliant according to the notebook model/i),
+      screen.getByText(
+        /all four ibcs rules look compliant according to the notebook model/i,
+      ),
     ).toBeInTheDocument();
 
     expect(screen.getByAltText(/uploaded dashboard/i)).toHaveAttribute(
@@ -86,14 +88,15 @@ describe("ResultsPage", () => {
         score: 72,
         status: "non-compliant",
         scenarioChecks: [
-          { label: "Previous", present: true, status: "non-compliant" },
-          { label: "Actual", present: true, status: "compliant" },
-          { label: "Plan / Budget", present: true, status: "non-compliant" },
-          { label: "Forecast", present: true, status: "compliant" },
+          { label: "Previous", evaluated: true, status: "non-compliant" },
+          { label: "Actual", evaluated: true, status: "compliant" },
+          { label: "Plan / Budget", evaluated: true, status: "non-compliant" },
+          { label: "Forecast", evaluated: true, status: "compliant" },
         ],
         issues: [
           {
-            message: "Previous is non-compliant. Previous Year is incorrect because the color is not lighter than Actual values. IBCS recommends lighter colors for historical data.",
+            message:
+              "Previous is non-compliant. Previous Year is incorrect because the color is not lighter than Actual values. IBCS recommends lighter colors for historical data.",
             severity: "high",
           },
         ],

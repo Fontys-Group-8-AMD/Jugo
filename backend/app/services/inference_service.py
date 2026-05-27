@@ -7,41 +7,32 @@ from PIL import Image
 from torch import nn
 from torchvision import models, transforms
 
+from app.core.prediction_constants import (
+    COMPLIANT_SUGGESTIONS,
+    NON_COMPLIANT_FALLBACK_SUGGESTION,
+    RULE_EXPLANATIONS,
+    RULE_LABELS,
+    RULE_NAMES,
+    SCENARIO_GROUPS,
+)
 
 # Decide whether to use GPU or CPU
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-RULE_NAMES = ["AC", "PY", "PL", "FC"]
-RULE_LABELS = {
-    "AC": "Actual",
-    "PY": "Previous Year",
-    "PL": "Plan",
-    "FC": "Forecast",
-}
-RULE_EXPLANATIONS = {
-    "AC": {
-        "correct": "Actual is correct because the dashboard uses a dark solid color, which follows IBCS standards for actual values.",
-        "incorrect": "Actual is incorrect because the dashboard does not use a dark solid color. According to IBCS standards, actual values should be clearly emphasized using dark solid colors.",
-    },
-    "PY": {
-        "correct": "Previous Year is correct because the visual style is lighter than Actual values, making historical comparisons easier.",
-        "incorrect": "Previous Year is incorrect because the color is not lighter than Actual values. IBCS recommends lighter colors for historical data.",
-    },
-    "PL": {
-        "correct": "Plan is correct because the dashboard uses outlined shapes, which is the recommended IBCS style for planned values.",
-        "incorrect": "Plan is incorrect because the dashboard uses filled shapes instead of outlined shapes. IBCS standards recommend outlined visuals for planned values.",
-    },
-    "FC": {
-        "correct": "Forecast is correct because the dashboard uses a hatched or patterned style, which follows IBCS standards for forecast values.",
-        "incorrect": "Forecast is incorrect because the dashboard does not use a hatched pattern. According to IBCS standards, forecast values should use a patterned style.",
-    },
-}
+DEFAULT_IMAGE_SIZE = 224
+DEFAULT_THRESHOLD = 0.5
+DROPOUT_RATE = 0.3
+MODEL_OUTPUT_SIZE = 10
 
 
 class InferenceService:
     def __init__(self):
         # Load the saved model file exported from the final notebook.
-        model_path = Path(__file__).resolve().parents[3] / "model" / "ibcs_final_model.pth"
+        model_path = (
+            Path(__file__).resolve().parents[3]
+            / "model"
+            / "ibcs_final_model.pth"
+        )
 
         checkpoint = torch.load(model_path, map_location=DEVICE)
 
@@ -49,12 +40,12 @@ class InferenceService:
         # older wrapped checkpoints in case the file is regenerated later.
         if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
             model_state_dict = checkpoint["model_state_dict"]
-            self.img_size = checkpoint.get("img_size", 224)
-            self.threshold = checkpoint.get("threshold", 0.5)
+            self.img_size = checkpoint.get("img_size", DEFAULT_IMAGE_SIZE)
+            self.threshold = checkpoint.get("threshold", DEFAULT_THRESHOLD)
         else:
             model_state_dict = checkpoint
-            self.img_size = 224
-            self.threshold = 0.5
+            self.img_size = DEFAULT_IMAGE_SIZE
+            self.threshold = DEFAULT_THRESHOLD
 
         # Image preprocessing (must match training!)
         self.transform = transforms.Compose([
@@ -72,60 +63,116 @@ class InferenceService:
         self.model.to(DEVICE)
         self.model.eval()
 
-    def _build_model(self):
+    def _build_model(self) -> nn.Module:
         # Use ResNet18 (same as in training)
         model = models.resnet18(weights=None)
 
-        # Replace final layer for multi-label classification (4 outputs)
+        # Replace final layer for multi-label classification (10 outputs)
         model.fc = nn.Sequential(
-            nn.Dropout(0.3),
-            nn.Linear(model.fc.in_features, 4),
+            nn.Dropout(DROPOUT_RATE),
+            nn.Linear(model.fc.in_features, MODEL_OUTPUT_SIZE),
         )
 
         return model
-
-    def predict(self, image_bytes: bytes):
-        # Convert uploaded file bytes into an image
+    
+    def _prepare_image(self, image_bytes: bytes) -> torch.Tensor:
         image = Image.open(BytesIO(image_bytes)).convert("RGB")
-
-        # Apply same transformations as during training
-        image_tensor = self.transform(image).unsqueeze(0).to(DEVICE)
-
-        # Disable gradient calculation (faster + no training)
+        return self.transform(image).unsqueeze(0).to(DEVICE)
+    
+    def _run_inference(self, image_tensor: torch.Tensor) -> list[float]:
         with torch.no_grad():
             output = self.model(image_tensor)
+            return torch.sigmoid(output).squeeze(0).cpu().tolist()
 
-            probabilities = torch.sigmoid(output).squeeze(0).cpu().tolist()
+    def _build_rule_prediction(self, rule_name: str, probability: float) -> dict:
+        mistake_detected = probability >= self.threshold
+        predicted_value = 1 if mistake_detected else 0
+        is_compliant = not mistake_detected
+        confidence = probability if mistake_detected else 1 - probability
 
-        rules = []
-        confidences = []
+        return {
+            "rule": rule_name,
+            "label": RULE_LABELS[rule_name],
+            "prediction": predicted_value,
+            "status": "compliant" if is_compliant else "non-compliant",
+            "confidence": round(confidence, 4),
+            "probability_compliant": round(1 - probability, 4),
+            "probability_non_compliant": round(probability, 4),
+            "explanation": RULE_EXPLANATIONS[rule_name][
+                "correct" if is_compliant else "incorrect"
+            ],
+        }
+    
+    def _build_scenario_checks(self, rules: list[dict]) -> list[dict]:
+        scenario_checks = []
 
-        for rule_name, probability in zip(RULE_NAMES, probabilities):
-            predicted_value = 1 if probability >= self.threshold else 0
-            is_compliant = predicted_value == 1
-            confidence = probability if is_compliant else 1 - probability
+        for group in SCENARIO_GROUPS:
+            group_rules = [
+                rule for rule in rules
+                if rule["rule"] in group["rules"]
+            ]
 
-            confidences.append(confidence)
+            has_non_compliant_rule = any(
+                rule["status"] == "non-compliant"
+                for rule in group_rules
+            )
 
-            rules.append(
+            if not has_non_compliant_rule:
+                continue
+
+            scenario_checks.append(
                 {
-                    "rule": rule_name,
-                    "label": RULE_LABELS[rule_name],
-                    "prediction": predicted_value,
-                    "status": "compliant" if is_compliant else "non-compliant",
-                    "confidence": round(confidence, 4),
-                    "probability_compliant": round(probability, 4),
-                    "probability_non_compliant": round(1 - probability, 4),
-                    "explanation": RULE_EXPLANATIONS[rule_name][
-                        "correct" if is_compliant else "incorrect"
-                    ],
+                    "label": group["label"],
+                    "evaluated": True,
+                    "status": "non-compliant",
                 }
             )
 
-        overall_compliant = all(rule["prediction"] == 1 for rule in rules)
+        return scenario_checks
+
+    def _build_issues(self, rules: list[dict]) -> list[dict]:
+        return [
+            {
+                "message": f"{rule['label']} is non-compliant. {rule['explanation']}",
+                "severity": "high",
+            }
+            for rule in rules
+            if rule["status"] == "non-compliant"
+        ]
+
+    def _build_suggestions(self, issues: list[dict], rules: list[dict]) -> list[str]:
+        if not issues:
+            return COMPLIANT_SUGGESTIONS
+
+        non_compliant_suggestions = [
+            rule["explanation"]
+            for rule in rules
+            if rule["status"] == "non-compliant"
+        ]
+
+        return [
+            *non_compliant_suggestions,
+            NON_COMPLIANT_FALLBACK_SUGGESTION,
+        ]
+
+    def predict(self, image_bytes: bytes) -> dict[str, object]:
+        image_tensor = self._prepare_image(image_bytes)
+        probabilities = self._run_inference(image_tensor)
+
+        rules = [
+            self._build_rule_prediction(rule_name, probability)
+            for rule_name, probability in zip(RULE_NAMES, probabilities)
+        ]
+
+        confidences = [rule["confidence"] for rule in rules]
+
+        overall_compliant = all(rule["status"] == "compliant" for rule in rules)
         overall_score = round(mean(confidences) * 100) if confidences else 0
 
-        # Return result as JSON-friendly dict
+        scenario_checks = self._build_scenario_checks(rules)
+        issues = self._build_issues(rules)
+        suggestions = self._build_suggestions(issues, rules)
+
         return {
             "prediction": 1 if overall_compliant else 0,
             "label_name": "compliant" if overall_compliant else "non-compliant",
@@ -137,4 +184,7 @@ class InferenceService:
                 mean(rule["probability_non_compliant"] for rule in rules), 4
             ),
             "rules": rules,
+            "scenario_checks": scenario_checks,
+            "issues": issues,
+            "suggestions": suggestions,
         }

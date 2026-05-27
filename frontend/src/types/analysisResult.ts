@@ -1,7 +1,9 @@
+import type { ComplianceStatus } from "../api/analyzeApi";
+
 export interface ScenarioCheck {
-  label: "Previous" | "Actual" | "Plan / Budget" | "Forecast";
-  present: boolean;
-  status: "compliant" | "non-compliant";
+  label: string;
+  evaluated: boolean;
+  status: ComplianceStatus;
 }
 
 export interface AnalysisConfidenceCircleProps {
@@ -9,7 +11,7 @@ export interface AnalysisConfidenceCircleProps {
 }
 export interface AnalysisSummaryCardProps {
   score: number;
-  status: "compliant" | "non-compliant";
+  status: ComplianceStatus;
   scenarioChecks: ScenarioCheck[];
 }
 
@@ -20,7 +22,7 @@ export interface AnalysisIssue {
 
 export interface AnalysisResult {
   score: number;
-  status: "compliant" | "non-compliant";
+  status: ComplianceStatus;
   uploadedImageUrl: string;
   scenarioChecks: ScenarioCheck[];
   issues: AnalysisIssue[];

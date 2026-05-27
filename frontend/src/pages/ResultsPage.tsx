@@ -55,6 +55,7 @@ const ResultsPage = () => {
 
             <SuggestedImprovementsCard
               suggestions={analysisResult.suggestions}
+              status={analysisResult.status}
             />
 
             <ExportReportButton />
