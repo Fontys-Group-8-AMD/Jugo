@@ -4,7 +4,18 @@ from pydantic import BaseModel
 
 
 class RulePrediction(BaseModel):
-    rule: Literal["AC", "PY", "PL", "FC"]
+    rule: Literal[
+        "AC-graph",
+        "PY-graph",
+        "PL-graph",
+        "FC-graph",
+        "AC-abr",
+        "PY-abr",
+        "BU-abr",
+        "PL-abr",
+        "FC-abr",
+        "Axis",
+    ]
     label: str
     prediction: int
     status: Literal["compliant", "non-compliant"]

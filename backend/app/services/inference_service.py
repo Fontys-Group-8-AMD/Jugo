@@ -11,13 +11,32 @@ from torchvision import models, transforms
 # Decide whether to use GPU or CPU
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-RULE_NAMES = ["AC", "PY", "PL", "FC"]
+RULE_NAMES = [
+    "AC-graph",
+    "PY-graph",
+    "PL-graph",
+    "FC-graph",
+    "AC-abr",
+    "PY-abr",
+    "BU-abr",
+    "PL-abr",
+    "FC-abr",
+    "Axis",
+]
+
 RULE_LABELS = {
-    "AC": "Actual",
-    "PY": "Previous Year",
-    "PL": "Plan",
-    "FC": "Forecast",
+    "AC-graph": "Actual Graph",
+    "PY-graph": "Previous Year Graph",
+    "PL-graph": "Plan Graph",
+    "FC-graph": "Forecast Graph",
+    "AC-abr": "Actual Abbreviation",
+    "PY-abr": "Previous Year Abbreviation",
+    "BU-abr": "Budget Abbreviation",
+    "PL-abr": "Plan Abbreviation",
+    "FC-abr": "Forecast Abbreviation",
+    "Axis": "Axis",
 }
+
 RULE_EXPLANATIONS = {
     "AC": {
         "correct": "Actual is correct because the dashboard uses a dark solid color, which follows IBCS standards for actual values.",
@@ -79,7 +98,7 @@ class InferenceService:
         # Replace final layer for multi-label classification (4 outputs)
         model.fc = nn.Sequential(
             nn.Dropout(0.3),
-            nn.Linear(model.fc.in_features, 4),
+            nn.Linear(model.fc.in_features, 10),
         )
 
         return model
@@ -101,9 +120,11 @@ class InferenceService:
         confidences = []
 
         for rule_name, probability in zip(RULE_NAMES, probabilities):
-            predicted_value = 1 if probability >= self.threshold else 0
-            is_compliant = predicted_value == 1
-            confidence = probability if is_compliant else 1 - probability
+            mistake_detected = probability >= self.threshold
+            predicted_value = 1 if mistake_detected else 0
+            is_compliant = not mistake_detected
+
+            confidence = probability if mistake_detected else 1 - probability
 
             confidences.append(confidence)
 
@@ -116,13 +137,15 @@ class InferenceService:
                     "confidence": round(confidence, 4),
                     "probability_compliant": round(probability, 4),
                     "probability_non_compliant": round(1 - probability, 4),
-                    "explanation": RULE_EXPLANATIONS[rule_name][
-                        "correct" if is_compliant else "incorrect"
-                    ],
+                    "explanation": (
+                        f"{RULE_LABELS[rule_name]} appears compliant."
+                        if is_compliant
+                        else f"{RULE_LABELS[rule_name]} appears non-compliant and should be reviewed."
+                    ),
                 }
             )
 
-        overall_compliant = all(rule["prediction"] == 1 for rule in rules)
+        overall_compliant = all(rule["status"] == "compliant" for rule in rules)
         overall_score = round(mean(confidences) * 100) if confidences else 0
 
         # Return result as JSON-friendly dict

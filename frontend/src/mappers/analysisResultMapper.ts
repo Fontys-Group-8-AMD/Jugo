@@ -1,22 +1,48 @@
 import type { PredictionResponse } from "../api/analyzeApi";
 import type { AnalysisResult } from "../types/analysisResult";
 
-const RULE_LABEL_MAP: Record<PredictionResponse["rules"][number]["rule"], "Previous" | "Actual" | "Plan / Budget" | "Forecast"> = {
-  AC: "Actual",
-  PY: "Previous",
-  PL: "Plan / Budget",
-  FC: "Forecast",
-};
+const GROUPS = [
+  {
+    label: "Actual",
+    rules: ["AC-graph", "AC-abr"],
+  },
+  {
+    label: "Previous Year",
+    rules: ["PY-graph", "PY-abr"],
+  },
+  {
+    label: "Plan / Budget",
+    rules: ["PL-graph", "PL-abr", "BU-abr"],
+  },
+  {
+    label: "Forecast",
+    rules: ["FC-graph", "FC-abr"],
+  },
+  {
+    label: "Axis",
+    rules: ["Axis"],
+  },
+] as const;
 
 export const mapPredictionToAnalysisResult = (
   predictionResult: PredictionResponse,
   previewUrl: string,
 ): AnalysisResult => {
-  const scenarioChecks = predictionResult.rules.map((rule) => ({
-    label: RULE_LABEL_MAP[rule.rule],
-    present: true,
-    status: rule.status,
-  }));
+  const scenarioChecks = GROUPS.map((group) => {
+    const groupRules = predictionResult.rules.filter((rule) =>
+      group.rules.includes(rule.rule as never),
+    );
+
+    const hasNonCompliantRule = groupRules.some(
+      (rule) => rule.status === "non-compliant",
+    );
+
+    return {
+      label: group.label,
+      present: true,
+      status: hasNonCompliantRule ? "non-compliant" : "compliant",
+    };
+  });
 
   const issues = predictionResult.rules
     .filter((rule) => rule.status === "non-compliant")
@@ -28,16 +54,14 @@ export const mapPredictionToAnalysisResult = (
   const suggestions =
     issues.length > 0
       ? [
-          ...predictionResult.rules.map((rule) =>
-            rule.status === "non-compliant"
-              ? rule.explanation
-              : `${rule.label} looks correct and follows the notebook model's prediction.`,
-          ),
-          "Review the non-compliant rules in the uploaded dashboard and align their visual notation with the notebook model feedback.",
+          ...predictionResult.rules
+            .filter((rule) => rule.status === "non-compliant")
+            .map((rule) => rule.explanation),
+          "Review the non-compliant rule groups and align their visual notation with IBCS standards.",
         ]
       : [
-          "All four IBCS rules look compliant according to the notebook model.",
-          "Keep the visual notation consistent for Actual, Previous Year, Plan, and Forecast values.",
+          "All IBCS rule groups look compliant according to the model.",
+          "Keep the visual notation consistent for Actual, Previous Year, Plan / Budget, Forecast, and Axis values.",
           "Use the per-rule confidence values if you want to highlight weaker predictions.",
         ];
 
