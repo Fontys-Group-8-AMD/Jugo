@@ -8,9 +8,12 @@ from torch import nn
 from torchvision import models, transforms
 
 from app.core.prediction_constants import (
-    RULE_NAMES,
-    RULE_LABELS,
+    COMPLIANT_SUGGESTIONS,
+    NON_COMPLIANT_FALLBACK_SUGGESTION,
     RULE_EXPLANATIONS,
+    RULE_LABELS,
+    RULE_NAMES,
+    SCENARIO_GROUPS,
 )
 
 # Decide whether to use GPU or CPU
@@ -99,6 +102,59 @@ class InferenceService:
                 "correct" if is_compliant else "incorrect"
             ],
         }
+    
+    def _build_scenario_checks(self, rules: list[dict]) -> list[dict]:
+        scenario_checks = []
+
+        for group in SCENARIO_GROUPS:
+            group_rules = [
+                rule for rule in rules
+                if rule["rule"] in group["rules"]
+            ]
+
+            has_non_compliant_rule = any(
+                rule["status"] == "non-compliant"
+                for rule in group_rules
+            )
+
+            scenario_checks.append(
+                {
+                    "label": group["label"],
+                    "present": True,
+                    "status": (
+                        "non-compliant"
+                        if has_non_compliant_rule
+                        else "compliant"
+                    ),
+                }
+            )
+
+        return scenario_checks
+
+    def _build_issues(self, rules: list[dict]) -> list[dict]:
+        return [
+            {
+                "message": f"{rule['label']} is non-compliant. {rule['explanation']}",
+                "severity": "high",
+            }
+            for rule in rules
+            if rule["status"] == "non-compliant"
+        ]
+
+    def _build_suggestions(self, issues: list[dict], rules: list[dict]) -> list[str]:
+        if not issues:
+            return COMPLIANT_SUGGESTIONS
+
+        non_compliant_suggestions = [
+            rule["explanation"]
+            for rule in rules
+            if rule["status"] == "non-compliant"
+        ]
+
+        return [
+            *non_compliant_suggestions,
+            NON_COMPLIANT_FALLBACK_SUGGESTION,
+        ]
 
     def predict(self, image_bytes: bytes) -> dict[str, object]:
         image_tensor = self._prepare_image(image_bytes)
@@ -114,6 +170,10 @@ class InferenceService:
         overall_compliant = all(rule["status"] == "compliant" for rule in rules)
         overall_score = round(mean(confidences) * 100) if confidences else 0
 
+        scenario_checks = self._build_scenario_checks(rules)
+        issues = self._build_issues(rules)
+        suggestions = self._build_suggestions(issues, rules)
+
         return {
             "prediction": 1 if overall_compliant else 0,
             "label_name": "compliant" if overall_compliant else "non-compliant",
@@ -125,4 +185,7 @@ class InferenceService:
                 mean(rule["probability_non_compliant"] for rule in rules), 4
             ),
             "rules": rules,
+            "scenario_checks": scenario_checks,
+            "issues": issues,
+            "suggestions": suggestions,
         }

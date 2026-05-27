@@ -11,6 +11,39 @@ RULE_NAMES = [
     "Axis",
 ]
 
+SCENARIO_GROUPS = [
+    {
+        "label": "Actual",
+        "rules": ["AC-graph", "AC-abr"],
+    },
+    {
+        "label": "Previous Year",
+        "rules": ["PY-graph", "PY-abr"],
+    },
+    {
+        "label": "Plan / Budget",
+        "rules": ["PL-graph", "PL-abr", "BU-abr"],
+    },
+    {
+        "label": "Forecast",
+        "rules": ["FC-graph", "FC-abr"],
+    },
+    {
+        "label": "Axis",
+        "rules": ["Axis"],
+    },
+]
+
+COMPLIANT_SUGGESTIONS = [
+    "All IBCS rule groups look compliant according to the model.",
+    "Keep the visual notation consistent for Actual, Previous Year, Plan / Budget, Forecast, and Axis values.",
+    "Use the per-rule confidence values if you want to highlight weaker predictions.",
+]
+
+NON_COMPLIANT_FALLBACK_SUGGESTION = (
+    "Review the non-compliant rule groups and align their visual notation with IBCS standards."
+)
+
 RULE_LABELS = {
     "AC-graph": "Actual Graph",
     "PY-graph": "Previous Year Graph",

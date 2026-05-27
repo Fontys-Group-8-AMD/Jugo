@@ -23,6 +23,17 @@ export type RulePrediction = {
   explanation: string;
 };
 
+export type ScenarioCheckResponse = {
+  label: string;
+  present: boolean;
+  status: ComplianceStatus;
+};
+
+export type AnalysisIssueResponse = {
+  message: string;
+  severity: "high" | "medium";
+};
+
 export type PredictionResponse = {
   prediction: number;
   label_name: ComplianceStatus;
@@ -30,6 +41,9 @@ export type PredictionResponse = {
   probability_compliant: number;
   probability_non_compliant: number;
   rules: RulePrediction[];
+  scenario_checks: ScenarioCheckResponse[];
+  issues: AnalysisIssueResponse[];
+  suggestions: string[];
   filename?: string;
 };
 

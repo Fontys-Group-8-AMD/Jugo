@@ -2,6 +2,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
+
 RuleName = Literal[
     "AC-graph",
     "PY-graph",
@@ -27,6 +28,18 @@ class RulePrediction(BaseModel):
     probability_non_compliant: float
     explanation: str
 
+
+class ScenarioCheck(BaseModel):
+    label: str
+    present: bool
+    status: ComplianceStatus
+
+
+class AnalysisIssue(BaseModel):
+    message: str
+    severity: Literal["high", "medium"]
+
+
 class PredictionResponse(BaseModel):
     prediction: int
     label_name: ComplianceStatus
@@ -34,3 +47,6 @@ class PredictionResponse(BaseModel):
     probability_compliant: float
     probability_non_compliant: float
     rules: list[RulePrediction]
+    scenario_checks: list[ScenarioCheck]
+    issues: list[AnalysisIssue]
+    suggestions: list[str]
