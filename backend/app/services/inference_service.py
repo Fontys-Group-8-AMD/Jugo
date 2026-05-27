@@ -38,21 +38,45 @@ RULE_LABELS = {
 }
 
 RULE_EXPLANATIONS = {
-    "AC": {
-        "correct": "Actual is correct because the dashboard uses a dark solid color, which follows IBCS standards for actual values.",
-        "incorrect": "Actual is incorrect because the dashboard does not use a dark solid color. According to IBCS standards, actual values should be clearly emphasized using dark solid colors.",
+    "AC-graph": {
+        "correct": "Actual values use the expected dark solid visual style.",
+        "incorrect": "Actual values should use a dark solid visual style so they are clearly distinguishable from other scenarios.",
     },
-    "PY": {
-        "correct": "Previous Year is correct because the visual style is lighter than Actual values, making historical comparisons easier.",
-        "incorrect": "Previous Year is incorrect because the color is not lighter than Actual values. IBCS recommends lighter colors for historical data.",
+    "PY-graph": {
+        "correct": "Previous Year values use a suitable lighter comparison style.",
+        "incorrect": "Previous Year values should use a lighter visual style than Actual values to make historical comparison clear.",
     },
-    "PL": {
-        "correct": "Plan is correct because the dashboard uses outlined shapes, which is the recommended IBCS style for planned values.",
-        "incorrect": "Plan is incorrect because the dashboard uses filled shapes instead of outlined shapes. IBCS standards recommend outlined visuals for planned values.",
+    "PL-graph": {
+        "correct": "Plan values use the expected outlined visual style.",
+        "incorrect": "Plan values should use outlined shapes instead of filled shapes according to IBCS notation.",
     },
-    "FC": {
-        "correct": "Forecast is correct because the dashboard uses a hatched or patterned style, which follows IBCS standards for forecast values.",
-        "incorrect": "Forecast is incorrect because the dashboard does not use a hatched pattern. According to IBCS standards, forecast values should use a patterned style.",
+    "FC-graph": {
+        "correct": "Forecast values use the expected patterned visual style.",
+        "incorrect": "Forecast values should use a hatched or patterned style to separate them from actual and planned values.",
+    },
+    "AC-abr": {
+        "correct": "The Actual abbreviation is used correctly.",
+        "incorrect": "The Actual abbreviation should be written consistently as AC.",
+    },
+    "PY-abr": {
+        "correct": "The Previous Year abbreviation is used correctly.",
+        "incorrect": "The Previous Year abbreviation should be written consistently as PY.",
+    },
+    "BU-abr": {
+        "correct": "The Budget abbreviation is used correctly.",
+        "incorrect": "The Budget abbreviation should be written consistently as BU.",
+    },
+    "PL-abr": {
+        "correct": "The Plan abbreviation is used correctly.",
+        "incorrect": "The Plan abbreviation should be written consistently as PL.",
+    },
+    "FC-abr": {
+        "correct": "The Forecast abbreviation is used correctly.",
+        "incorrect": "The Forecast abbreviation should be written consistently as FC.",
+    },
+    "Axis": {
+        "correct": "The axis labeling follows the expected semantic structure.",
+        "incorrect": "The axis labeling should be reviewed so the meaning, units, and scenario information are clear.",
     },
 }
 
@@ -137,11 +161,9 @@ class InferenceService:
                     "confidence": round(confidence, 4),
                     "probability_compliant": round(probability, 4),
                     "probability_non_compliant": round(1 - probability, 4),
-                    "explanation": (
-                        f"{RULE_LABELS[rule_name]} appears compliant."
-                        if is_compliant
-                        else f"{RULE_LABELS[rule_name]} appears non-compliant and should be reviewed."
-                    ),
+                    "explanation": RULE_EXPLANATIONS[rule_name][
+                        "correct" if is_compliant else "incorrect"
+                    ],
                 }
             )
 
@@ -153,11 +175,7 @@ class InferenceService:
             "prediction": 1 if overall_compliant else 0,
             "label_name": "compliant" if overall_compliant else "non-compliant",
             "score": overall_score,
-            "probability_compliant": round(
-                mean(rule["probability_compliant"] for rule in rules), 4
-            ),
-            "probability_non_compliant": round(
-                mean(rule["probability_non_compliant"] for rule in rules), 4
-            ),
+            "probability_compliant": round(1 - probability, 4),
+            "probability_non_compliant": round(probability, 4),
             "rules": rules,
         }

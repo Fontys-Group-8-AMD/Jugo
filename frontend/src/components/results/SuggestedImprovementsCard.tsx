@@ -1,14 +1,19 @@
 interface SuggestedImprovementsCardProps {
   suggestions: string[];
+  status: "compliant" | "non-compliant";
 }
 
 const SuggestedImprovementsCard = ({
   suggestions,
+  status,
 }: SuggestedImprovementsCardProps) => {
+  const title =
+    status === "compliant" ? "Validation Notes" : "Suggested Improvements";
+
   return (
     <section className="rounded-md border border-[var(--color-border)] bg-[var(--color-white)] p-5 shadow-sm">
       <h2 className="text-xl font-semibold text-[var(--color-dark)]">
-        Suggested Improvements
+        {title}
       </h2>
 
       <div className="mt-4 space-y-3">
