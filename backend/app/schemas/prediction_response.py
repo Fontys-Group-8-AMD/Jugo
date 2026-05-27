@@ -2,32 +2,34 @@ from typing import Literal
 
 from pydantic import BaseModel
 
+RuleName = Literal[
+    "AC-graph",
+    "PY-graph",
+    "PL-graph",
+    "FC-graph",
+    "AC-abr",
+    "PY-abr",
+    "BU-abr",
+    "PL-abr",
+    "FC-abr",
+    "Axis",
+]
+
+ComplianceStatus = Literal["compliant", "non-compliant"]
 
 class RulePrediction(BaseModel):
-    rule: Literal[
-        "AC-graph",
-        "PY-graph",
-        "PL-graph",
-        "FC-graph",
-        "AC-abr",
-        "PY-abr",
-        "BU-abr",
-        "PL-abr",
-        "FC-abr",
-        "Axis",
-    ]
+    rule: RuleName
     label: str
     prediction: int
-    status: Literal["compliant", "non-compliant"]
+    status: ComplianceStatus
     confidence: float
     probability_compliant: float
     probability_non_compliant: float
     explanation: str
 
-
 class PredictionResponse(BaseModel):
     prediction: int
-    label_name: Literal["compliant", "non-compliant"]
+    label_name: ComplianceStatus
     score: int
     probability_compliant: float
     probability_non_compliant: float
