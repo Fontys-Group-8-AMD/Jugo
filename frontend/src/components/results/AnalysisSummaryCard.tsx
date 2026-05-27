@@ -43,8 +43,8 @@ const AnalysisSummaryCard = ({
               {visibleScenarioChecks.map((check) => {
                 const scenarioIsCompliant = check.status === "compliant";
                 const scenarioStatusLabel = scenarioIsCompliant
-                  ? "✓ Compliant"
-                  : "✗ Non-compliant";
+                  ? "✓ No issues detected"
+                  : `✗ Issues detected in ${check.label}`;
 
                 return (
                   <div

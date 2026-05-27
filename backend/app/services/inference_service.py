@@ -117,15 +117,14 @@ class InferenceService:
                 for rule in group_rules
             )
 
+            if not has_non_compliant_rule:
+                continue
+
             scenario_checks.append(
                 {
                     "label": group["label"],
                     "evaluated": True,
-                    "status": (
-                        "non-compliant"
-                        if has_non_compliant_rule
-                        else "compliant"
-                    ),
+                    "status": "non-compliant",
                 }
             )
 
