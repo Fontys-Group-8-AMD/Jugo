@@ -1,7 +1,12 @@
-import type { PredictionResponse } from "../api/analyzeApi";
-import type { AnalysisResult } from "../types/analysisResult";
+import type { PredictionResponse, RuleCode } from "../api/analyzeApi";
+import type { AnalysisResult, ScenarioCheck } from "../types/analysisResult";
 
-const GROUPS = [
+type ScenarioGroup = {
+  label: string;
+  rules: RuleCode[];
+};
+
+const GROUPS: ScenarioGroup[] = [
   {
     label: "Actual",
     rules: ["AC-graph", "AC-abr"],
@@ -22,19 +27,19 @@ const GROUPS = [
     label: "Axis",
     rules: ["Axis"],
   },
-] as const;
+];
 
 export const mapPredictionToAnalysisResult = (
   predictionResult: PredictionResponse,
   previewUrl: string,
 ): AnalysisResult => {
-  const scenarioChecks = GROUPS.map((group) => {
-    const groupRules = predictionResult.rules.filter((rule) =>
-      group.rules.includes(rule.rule as never),
-    );
+  const nonCompliantRules = predictionResult.rules.filter(
+    (rule) => rule.status === "non-compliant",
+  );
 
-    const hasNonCompliantRule = groupRules.some(
-      (rule) => rule.status === "non-compliant",
+  const scenarioChecks: ScenarioCheck[] = GROUPS.map((group) => {
+    const hasNonCompliantRule = nonCompliantRules.some((rule) =>
+      group.rules.includes(rule.rule),
     );
 
     return {
@@ -44,19 +49,15 @@ export const mapPredictionToAnalysisResult = (
     };
   });
 
-  const issues = predictionResult.rules
-    .filter((rule) => rule.status === "non-compliant")
-    .map((rule) => ({
-      message: `${rule.label} is non-compliant. ${rule.explanation}`,
-      severity: "high" as const,
-    }));
+  const issues = nonCompliantRules.map((rule) => ({
+    message: `${rule.label} is non-compliant. ${rule.explanation}`,
+    severity: "high" as const,
+  }));
 
   const suggestions =
-    issues.length > 0
+    nonCompliantRules.length > 0
       ? [
-          ...predictionResult.rules
-            .filter((rule) => rule.status === "non-compliant")
-            .map((rule) => rule.explanation),
+          ...nonCompliantRules.map((rule) => rule.explanation),
           "Review the non-compliant rule groups and align their visual notation with IBCS standards.",
         ]
       : [
