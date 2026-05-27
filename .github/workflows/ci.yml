@@ -73,3 +73,6 @@ jobs:
 
       - name: Validate backend syntax
         run: python -m compileall .
+
+      - name: Test backend
+        run: python -m pytest

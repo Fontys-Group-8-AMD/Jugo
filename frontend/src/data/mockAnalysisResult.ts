@@ -8,22 +8,22 @@ export const mockAnalysisResult: AnalysisResult = {
   scenarioChecks: [
     {
       label: "Previous",
-      present: false,
+      evaluated: false,
       status: "non-compliant",
     },
     {
       label: "Actual",
-      present: true,
+      evaluated: true,
       status: "compliant",
     },
     {
       label: "Plan / Budget",
-      present: false,
+      evaluated: false,
       status: "non-compliant",
     },
     {
       label: "Forecast",
-      present: true,
+      evaluated: true,
       status: "compliant",
     },
   ],
