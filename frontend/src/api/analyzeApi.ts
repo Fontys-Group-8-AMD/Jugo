@@ -25,7 +25,7 @@ export type RulePrediction = {
 
 export type ScenarioCheckResponse = {
   label: string;
-  present: boolean;
+  evaluated: boolean;
   status: ComplianceStatus;
 };
 

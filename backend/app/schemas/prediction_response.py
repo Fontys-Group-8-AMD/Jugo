@@ -31,7 +31,7 @@ class RulePrediction(BaseModel):
 
 class ScenarioCheck(BaseModel):
     label: str
-    present: bool
+    evaluated: bool
     status: ComplianceStatus
 
 

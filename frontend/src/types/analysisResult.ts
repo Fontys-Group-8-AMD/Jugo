@@ -2,7 +2,7 @@ import type { ComplianceStatus } from "../api/analyzeApi";
 
 export interface ScenarioCheck {
   label: string;
-  present: boolean;
+  evaluated: boolean;
   status: ComplianceStatus;
 }
 
