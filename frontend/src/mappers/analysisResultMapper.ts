@@ -12,5 +12,6 @@ export const mapPredictionToAnalysisResult = (
     scenarioChecks: predictionResult.scenario_checks,
     issues: predictionResult.issues,
     suggestions: predictionResult.suggestions,
+    rules: predictionResult.rules,
   };
 };

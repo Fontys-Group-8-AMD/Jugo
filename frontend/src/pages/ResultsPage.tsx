@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import AnalysisSummaryCard from "../components/results/AnalysisSummaryCard";
-import ExportReportButton from "../components/results/ExportReportButton";
 import ResultsHeader from "../components/results/ResultsHeader";
 import SuggestedImprovementsCard from "../components/results/SuggestedImprovementsCard";
 import UploadedDashboardCard from "../components/results/UploadedDashboardCard";
@@ -57,8 +56,6 @@ const ResultsPage = () => {
               suggestions={analysisResult.suggestions}
               status={analysisResult.status}
             />
-
-            <ExportReportButton />
           </aside>
         </div>
       </div>

@@ -35,4 +35,5 @@ export const mockAnalysisResult: AnalysisResult = {
     "Add colored feedback boxes around the detected problem areas so users can immediately see what needs to be corrected.",
     "Include a short explanation of how the confidence score was calculated to make the result more trustworthy.",
   ],
+  rules: [],
 };

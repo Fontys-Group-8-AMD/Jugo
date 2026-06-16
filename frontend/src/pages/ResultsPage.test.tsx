@@ -55,6 +55,7 @@ describe("ResultsPage", () => {
         suggestions: [
           "All four IBCS rules look compliant according to the notebook model.",
         ],
+        rules: [],
       },
     };
 
@@ -103,6 +104,7 @@ describe("ResultsPage", () => {
         suggestions: [
           "Review the non-compliant rules in the uploaded dashboard and align their visual notation with the notebook model feedback.",
         ],
+        rules: [],
       },
     };
 
