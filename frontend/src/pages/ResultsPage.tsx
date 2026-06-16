@@ -40,12 +40,12 @@ const ResultsPage = () => {
       <div className="mx-auto flex max-w-7xl flex-col gap-4">
         <ResultsHeader />
 
-        <div className="grid gap-4 xl:grid-cols-[1.25fr_0.9fr] xl:items-start">
+        <div className="grid gap-4 xl:grid-cols-[1.25fr_0.9fr] xl:items-stretch">
           <UploadedDashboardCard
             uploadedImageUrl={analysisResult.uploadedImageUrl}
           />
 
-          <aside className="flex flex-col gap-4">
+          <aside className="flex h-full flex-col gap-4">
             <AnalysisSummaryCard
               score={analysisResult.score}
               status={analysisResult.status}
