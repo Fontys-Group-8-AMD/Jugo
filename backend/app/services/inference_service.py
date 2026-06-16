@@ -9,10 +9,11 @@ from torchvision import models, transforms
 
 from app.core.prediction_constants import (
     COMPLIANT_SUGGESTIONS,
+    MODEL_RULE_NAMES,
+    MODEL_TO_API_RULE,
     NON_COMPLIANT_FALLBACK_SUGGESTION,
     RULE_EXPLANATIONS,
     RULE_LABELS,
-    RULE_NAMES,
     SCENARIO_GROUPS,
 )
 
@@ -84,21 +85,23 @@ class InferenceService:
             output = self.model(image_tensor)
             return torch.sigmoid(output).squeeze(0).cpu().tolist()
 
-    def _build_rule_prediction(self, rule_name: str, probability: float) -> dict:
+    def _build_rule_prediction(self, model_rule_name: str, probability: float) -> dict:
+        api_rule_name = MODEL_TO_API_RULE[model_rule_name]
+
         mistake_detected = probability >= self.threshold
         predicted_value = 1 if mistake_detected else 0
         is_compliant = not mistake_detected
         confidence = probability if mistake_detected else 1 - probability
 
         return {
-            "rule": rule_name,
-            "label": RULE_LABELS[rule_name],
+            "rule": api_rule_name,
+            "label": RULE_LABELS[api_rule_name],
             "prediction": predicted_value,
             "status": "compliant" if is_compliant else "non-compliant",
             "confidence": round(confidence, 4),
             "probability_compliant": round(1 - probability, 4),
             "probability_non_compliant": round(probability, 4),
-            "explanation": RULE_EXPLANATIONS[rule_name][
+            "explanation": RULE_EXPLANATIONS[api_rule_name][
                 "correct" if is_compliant else "incorrect"
             ],
         }
@@ -159,9 +162,14 @@ class InferenceService:
         image_tensor = self._prepare_image(image_bytes)
         probabilities = self._run_inference(image_tensor)
 
+        if len(probabilities) != len(MODEL_RULE_NAMES):
+            raise ValueError(
+                f"Model returned {len(probabilities)} outputs, expected {len(MODEL_RULE_NAMES)}."
+            )
+
         rules = [
-            self._build_rule_prediction(rule_name, probability)
-            for rule_name, probability in zip(RULE_NAMES, probabilities)
+            self._build_rule_prediction(model_rule_name, probability)
+            for model_rule_name, probability in zip(MODEL_RULE_NAMES, probabilities)
         ]
 
         confidences = [rule["confidence"] for rule in rules]
