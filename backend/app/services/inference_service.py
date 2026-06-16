@@ -182,7 +182,7 @@ class InferenceService:
         suggestions = self._build_suggestions(issues, rules)
 
         return {
-            "prediction": 1 if overall_compliant else 0,
+            "prediction": 0 if overall_compliant else 1,
             "label_name": "compliant" if overall_compliant else "non-compliant",
             "score": overall_score,
             "probability_compliant": round(
