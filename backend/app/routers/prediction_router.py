@@ -3,6 +3,10 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 from app.schemas.prediction_response import PredictionResponse
 from app.services.inference_service import InferenceService
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 router = APIRouter()
 
 # Allowed file types
@@ -37,9 +41,9 @@ async def predict(file: UploadFile = File(...)):
 
     try:
         # Send image to model for prediction
-        print(f"Received file: {file.filename}")
+        logger.info("Received file: %s", file.filename)
         result = inference_service.predict(contents)
-        print(f"Prediction result: {result}")
+        logger.info("Prediction completed for file: %s", file.filename)
         return result
 
     except Exception as ex:

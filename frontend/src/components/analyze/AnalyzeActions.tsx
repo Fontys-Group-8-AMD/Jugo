@@ -19,7 +19,7 @@ const AnalyzeActions = ({
         type="button"
         onClick={onUploadClick}
         disabled={isAnalyzing}
-        className="inline-flex items-center justify-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-white)] px-6 py-4 text-base font-semibold text-[var(--color-dark)] transition hover:bg-[var(--color-background)]"
+        className="inline-flex items-center justify-center gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-white)] px-6 py-4 text-base font-semibold text-[var(--color-dark)] transition hover:bg-[var(--color-background)]"
       >
         <Upload size={18} strokeWidth={2} />
         Upload Visualization
@@ -29,7 +29,7 @@ const AnalyzeActions = ({
         type="button"
         onClick={onAnalyzeClick}
         disabled={isAnalyzeDisabled}
-        className="inline-flex items-center justify-center gap-3 rounded-xl bg-[var(--color-accent)] px-6 py-4 text-base font-semibold text-[var(--color-white)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex items-center justify-center gap-3 rounded-md bg-[var(--color-accent)] px-6 py-4 text-base font-semibold text-[var(--color-white)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isAnalyzing ? (
           <>

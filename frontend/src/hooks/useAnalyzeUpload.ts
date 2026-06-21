@@ -1,34 +1,23 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { analyzeImage } from "../api/analyzeApi";
 import { mapPredictionToAnalysisResult } from "../mappers/analysisResultMapper";
 import type { ResultsNavigationState } from "../types/analysisResult";
 import { getFileValidationError } from "../utils/fileValidation";
+import { useDragAndDrop } from "./useDragAndDrop";
+import { useFilePreview } from "./useFilePreview";
+
+const DEFAULT_ANALYSIS_ERROR = "Something went wrong during analysis.";
 
 export const useAnalyzeUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [isDragActive, setIsDragActive] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const previewUrl = useMemo(() => {
-    if (!selectedFile) {
-      return "";
-    }
-
-    return URL.createObjectURL(selectedFile);
-  }, [selectedFile]);
-
-  useEffect(() => {
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  }, [previewUrl]);
+  const previewUrl = useFilePreview(selectedFile);
 
   const resetFileInput = () => {
     if (fileInputRef.current) {
@@ -53,6 +42,17 @@ export const useAnalyzeUpload = () => {
     setErrorMessage("");
   };
 
+  const {
+    isDragActive,
+    handleDragEnter,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    resetDragState,
+  } = useDragAndDrop({
+    onDropFile: setValidatedFile,
+  });
+
   const handleOpenFilePicker = () => {
     fileInputRef.current?.click();
   };
@@ -63,37 +63,10 @@ export const useAnalyzeUpload = () => {
     resetFileInput();
   };
 
-  const handleDragEnter = (event: React.DragEvent<HTMLElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragActive(true);
-  };
-
-  const handleDragOver = (event: React.DragEvent<HTMLElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragActive(true);
-  };
-
-  const handleDragLeave = (event: React.DragEvent<HTMLElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragActive(false);
-  };
-
-  const handleDrop = (event: React.DragEvent<HTMLElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragActive(false);
-
-    const file = event.dataTransfer.files?.[0] ?? null;
-    setValidatedFile(file);
-  };
-
   const handleRemoveFile = () => {
     setSelectedFile(null);
     setErrorMessage("");
-    setIsDragActive(false);
+    resetDragState();
     resetFileInput();
   };
 
@@ -120,9 +93,7 @@ export const useAnalyzeUpload = () => {
       navigate("/results", { state: navigationState });
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : "Something went wrong during analysis.";
+        error instanceof Error ? error.message : DEFAULT_ANALYSIS_ERROR;
 
       setErrorMessage(message);
     } finally {

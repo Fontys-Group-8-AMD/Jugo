@@ -32,7 +32,7 @@ const AnalyzePage = () => {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/png,image/jpeg,image/jpg"
+              accept="image/png,image/jpeg"
               className="hidden"
               onChange={handleFileChange}
             />
