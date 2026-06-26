@@ -11,12 +11,12 @@ const SuggestedImprovementsCard = ({
     status === "compliant" ? "Validation Notes" : "Suggested Improvements";
 
   return (
-    <section className="rounded-md border border-[var(--color-border)] bg-[var(--color-white)] p-5 shadow-sm">
+    <section className="flex flex-1 flex-col rounded-md border border-[var(--color-border)] bg-[var(--color-white)] p-5 shadow-sm">
       <h2 className="text-xl font-semibold text-[var(--color-dark)]">
         {title}
       </h2>
 
-      <div className="mt-4 space-y-3">
+      <div className="mt-4 flex-1 space-y-3">
         {suggestions.map((suggestion, index) => (
           <div key={suggestion} className="flex items-start gap-3">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-accent)] text-xs font-semibold text-[var(--color-white)]">

@@ -1,4 +1,4 @@
-import type { ComplianceStatus } from "../api/analyzeApi";
+import type { ComplianceStatus, RulePrediction } from "../api/analyzeApi";
 
 export interface ScenarioCheck {
   label: string;
@@ -9,12 +9,12 @@ export interface ScenarioCheck {
 export interface AnalysisConfidenceCircleProps {
   score: number;
 }
+
 export interface AnalysisSummaryCardProps {
   score: number;
   status: ComplianceStatus;
   scenarioChecks: ScenarioCheck[];
 }
-
 export interface AnalysisIssue {
   message: string;
   severity: "high" | "medium";
@@ -27,6 +27,7 @@ export interface AnalysisResult {
   scenarioChecks: ScenarioCheck[];
   issues: AnalysisIssue[];
   suggestions: string[];
+  rules: RulePrediction[];
 }
 
 export interface ResultsNavigationState {

@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import AnalysisSummaryCard from "../components/results/AnalysisSummaryCard";
-import ExportReportButton from "../components/results/ExportReportButton";
 import ResultsHeader from "../components/results/ResultsHeader";
 import SuggestedImprovementsCard from "../components/results/SuggestedImprovementsCard";
 import UploadedDashboardCard from "../components/results/UploadedDashboardCard";
@@ -41,12 +40,12 @@ const ResultsPage = () => {
       <div className="mx-auto flex max-w-7xl flex-col gap-4">
         <ResultsHeader />
 
-        <div className="grid gap-4 xl:grid-cols-[1.25fr_0.9fr] xl:items-start">
+        <div className="grid gap-4 xl:grid-cols-[1.25fr_0.9fr] xl:items-stretch">
           <UploadedDashboardCard
             uploadedImageUrl={analysisResult.uploadedImageUrl}
           />
 
-          <aside className="flex flex-col gap-4">
+          <aside className="flex h-full flex-col gap-4">
             <AnalysisSummaryCard
               score={analysisResult.score}
               status={analysisResult.status}
@@ -57,8 +56,6 @@ const ResultsPage = () => {
               suggestions={analysisResult.suggestions}
               status={analysisResult.status}
             />
-
-            <ExportReportButton />
           </aside>
         </div>
       </div>

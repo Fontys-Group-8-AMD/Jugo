@@ -1,15 +1,28 @@
-RULE_NAMES = [
+MODEL_RULE_NAMES = [
     "AC-graph",
     "PY-graph",
     "PL-graph",
     "FC-graph",
     "AC-abr",
     "PY-abr",
-    "BU-abr",
     "PL-abr",
     "FC-abr",
-    "Axis",
+    "axis",
+    "budget-abr",
 ]
+
+MODEL_TO_API_RULE = {
+    "AC-graph": "AC-graph",
+    "PY-graph": "PY-graph",
+    "PL-graph": "PL-graph",
+    "FC-graph": "FC-graph",
+    "AC-abr": "AC-abr",
+    "PY-abr": "PY-abr",
+    "PL-abr": "PL-abr",
+    "FC-abr": "FC-abr",
+    "axis": "Axis",
+    "budget-abr": "BU-abr",
+}
 
 SCENARIO_GROUPS = [
     {

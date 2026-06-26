@@ -7,10 +7,10 @@ export type RuleCode =
   | "FC-graph"
   | "AC-abr"
   | "PY-abr"
-  | "BU-abr"
   | "PL-abr"
   | "FC-abr"
-  | "Axis";
+  | "Axis"
+  | "BU-abr";
 
 export type RulePrediction = {
   rule: RuleCode;
